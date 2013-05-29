@@ -26,6 +26,8 @@ class qtype_mathexpression extends question_type {
      * @return object $result->error or $result->noticeyesno or $result->notice
      */
     public function save_question_options($question) {
+        print_object($question);
+
         global $DB;
         $result = new stdClass();
 
@@ -35,8 +37,7 @@ class qtype_mathexpression extends question_type {
         // Insert new answer
         $answer = new stdClass();
         $answer->question = $question->id;
-        $answer->answer = trim($question->answer['text']);
-        $answer->answerformat = $question->answer['format'];
+        $answer->answer = $question->answer;
         $answer->fraction = 1;
         $answer->feedback = '';
         $answer->feedbackformat = 0;

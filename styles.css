@@ -1,0 +1,7 @@
+.matheditor-container {
+    border: 1px solid #D1D1D1;
+}
+
+.mform fieldset .matheditor-equation {
+    margin-top: 10px;
+}

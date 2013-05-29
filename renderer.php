@@ -17,6 +17,24 @@
 defined('MOODLE_INTERNAL') || die();
 
 class qtype_mathexpression_renderer extends qtype_renderer {
+    /**
+     * Return any HTML that needs to be included in the page's <head> when this
+     * question is used.
+     * @global $PAGE
+     * @param $qa the question attempt that will be displayed on the page.
+     * @return string HTML fragment.
+     */
+    public function head_code(question_attempt $qa) {
+        global $PAGE;
+        $PAGE->requires->jquery();
+        $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/js/mathquill.min.js'));
+        $PAGE->requires->css(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/css/mathquill.css'));
+        $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/js/matheditor.js'));
+        $PAGE->requires->css(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/css/matheditor.css'));
+        $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/plugins/matheditor/all_strings.php'));
+        $PAGE->requires->js(new moodle_url('/question/type/mathexpression/mathexpression.js'));
+        return parent::head_code($qa);
+    }
 
     /**
      * Generates the display for the question, including the input fields and feedback items
@@ -32,18 +50,21 @@ class qtype_mathexpression_renderer extends qtype_renderer {
         $currentanswer = $qa->get_last_qt_var('answer');
         $inputname = $qa->get_qt_field_name('answer');
 
-        $editor = editors_get_preferred_editor(null);
-
-        $editor->use_editor($inputname, array(), array());
-
         $result = html_writer::tag('div', $question->format_questiontext($qa), array('class' => 'qtext'));
 
         if($options->readonly) {
             $result .= html_writer::tag('div', get_string('youranswer', 'qtype_mathexpression'));
             $result .= html_writer::tag('div', $qa->get_response_summary());
         } else {
-            $result .= html_writer::tag('div', html_writer::tag('textarea', $currentanswer,
-                    array('id' => $inputname, 'name' => $inputname, 'rows' => 20, 'cols' => 60)));
+            $inputattributes = array(
+                'type' => 'hidden',
+                'name' => $inputname,
+                'class' => 'matheditor-answer',
+                'value' => $currentanswer
+            );
+            $input = html_writer::empty_tag('input', $inputattributes);
+            $result .= html_writer::tag('div', $input, array('class' => 'question-matheditor',
+                'data-matheditor' => 'input[name="'.$inputname.'"]')); // Selector for hidden field
         }
 
         return $result;

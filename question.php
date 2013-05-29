@@ -29,7 +29,7 @@ class qtype_mathexpression_question extends question_graded_automatically {
      * @return array storing (variable name) => (variable type)
      */
     public function get_expected_data() {
-        return array('answer' => PARAM_RAW_TRIMMED);
+        return array('answer' => PARAM_RAW);
     }
 
     /**
@@ -68,7 +68,7 @@ class qtype_mathexpression_question extends question_graded_automatically {
     public function summarise_response(array $response) {
         if (isset($response['answer'])) {
             // Return MathJax renderable text
-            return $response['answer'];
+            return '\('.$response['answer'].'\)';
         } else {
             return null;
         }

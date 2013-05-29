@@ -25,7 +25,21 @@ class qtype_mathexpression_edit_form extends question_edit_form {
      * @param object $mform the object being built
      */
     protected function definition_inner($mform) {
-        $mform->addElement('editor', 'answer', get_string('answer', 'qtype_mathexpression'));
+        global $PAGE;
+        $PAGE->requires->jquery();
+        $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/js/mathquill.min.js'));
+        $PAGE->requires->css(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/css/mathquill.css'));
+        $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/js/matheditor.js'));
+        $PAGE->requires->css(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/css/matheditor.css'));
+        $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/plugins/matheditor/all_strings.php'));
+        $PAGE->requires->js(new moodle_url('/question/type/mathexpression/mathexpression.js'));
+        $PAGE->requires->css(new moodle_url('/question/type/mathexpression/styles.css'));
+
+        $matheditor = $this->math_editor();
+        $mform->addElement('static', 'matheditor', get_string('answer', 'qtype_mathexpression'),
+                $matheditor);
+
+        $mform->addElement('hidden', 'answer', '&nbsp;', array('class' => 'matheditor-answer'));
         $mform->setType('answer', PARAM_RAW);
     }
 
@@ -38,13 +52,12 @@ class qtype_mathexpression_edit_form extends question_edit_form {
      */
     protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
-        $question = $this->data_preprocessing_answers($question);
 
-        // Store answer in format that the editor can use
-        $answer = array_shift($question->options->answers);
+        $question = $this->data_preprocessing_answers($question);
+        
         if (isset($question->options)) {
-            $question->answer = array();
-            $question->answer['text'] = $answer->answer;
+            $answer = array_shift($question->options->answers);
+            $question->answer = $answer->answer;
         }
 
         return $question;
@@ -60,11 +73,11 @@ class qtype_mathexpression_edit_form extends question_edit_form {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+
         $answer = $data['answer'];
 
-        $trimmedanswer = trim($answer['text']);
-        if ($trimmedanswer == '') {
-            $errors['answer'] = get_string('mustprovideanswer', 'qtype_mathexpression', 1);
+        if ($answer == '') {
+            $errors['matheditor'] = get_string('mustprovideanswer', 'qtype_mathexpression', 1);
         }
 
         return $errors;
@@ -78,5 +91,16 @@ class qtype_mathexpression_edit_form extends question_edit_form {
      */
     public function qtype() {
         return 'mathexpression';
+    }
+
+    /**
+     * Generates the HTML markup for the matheditor form element.
+     *
+     * @return string html
+     */
+    private function math_editor() {
+        $result = '<div class="question-matheditor" data-matheditor=".matheditor-answer">';
+        $result .= '</div>';
+        return $result;
     }
 }
