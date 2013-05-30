@@ -88,7 +88,7 @@ class qtype_mathexpression_question extends question_graded_automatically {
         // it simply compares the two arrays at the given key and checks to see if they are
         // equivalent using ===
         return question_utils::arrays_same_at_key_missing_is_blank(
-                $prevresponse, $newresponse, 'answer');
+            $prevresponse, $newresponse, 'answer');
     }
 
     /**
