@@ -9,7 +9,11 @@ for more information. Installation and running instructions are bellow:
 
 1. Install [Sage Math](http://www.sagemath.org/) on the server machine, once this is is done running `sage`
   from the command line should work.
-2. Download 
+2. Download [Web.py](http://webpy.org/) and untar it
+3. Navigate to the extracted folder and run the following command ( **NOTE:** it is important to run this using the
+  Python that is bundled with Sage) `sudo sage -python setup.py install`
+4. Navigate to this project's `server` folder
+5. Start the server `sage -python server.py`
 
 #### Server References
 
