@@ -13,7 +13,7 @@ for more information. Installation and running instructions are bellow:
 3. Navigate to the extracted folder and run the following command ( **NOTE:** it is important to run this using the
   Python that is bundled with Sage) `sudo sage -python setup.py install`
 4. Navigate to this project's `server` folder
-5. Start the server `sage -python server.py`
+5. Start the server `sage -python server.py` (a port can be specified by using the `-p` flag)
 
 #### Server API
 
