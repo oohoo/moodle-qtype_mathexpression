@@ -114,13 +114,25 @@ class qtype_mathexpression_question extends question_graded_automatically {
      * @return array (number, integer) corresponding to the fraction and the state.
      */
     public function grade_response(array $response) {
-        // @TODO better matching, of course string comparison is not enough this is where we could
-        // use the SageMath hook
-        if($response['answer'] === $this->correctanswer) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,"http://129.128.136.52:8080/sage/simple");
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(
+            array('expr1' => $response['answer'],
+                'expr2' => $this->correctanswer,
+                'vars' => 'a')));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $server_response = curl_exec($ch);
+        echo $server_response;
+        $sage_result = json_decode($server_response);
+        print_object($sage_result);
+        if($sage_result->result) {
             $fraction = 1.0;
         } else {
             $fraction = 0;
         }
+
         // Utilize the user defined state for the given fraction value, see the question_state
         // documentation for more information
         return array($fraction, question_state::graded_state_for_fraction($fraction));
