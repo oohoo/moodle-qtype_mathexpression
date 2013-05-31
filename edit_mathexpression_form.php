@@ -35,6 +35,11 @@ class qtype_mathexpression_edit_form extends question_edit_form {
         $PAGE->requires->js(new moodle_url('/question/type/mathexpression/mathexpression.js'));
         $PAGE->requires->css(new moodle_url('/question/type/mathexpression/styles.css'));
 
+        $mform->addElement('textarea', 'buttonlist', get_string('buttonlist', 'qtype_mathexpression'),
+                array('rows' => 6, 'cols' => 80));
+        $mform->addHelpButton('buttonlist', 'buttonlist', 'qtype_mathexpression');
+        $mform->setDefault('buttonlist', get_string('buttonlist_default', 'qtype_mathexpression'));
+
         $matheditor = $this->math_editor();
         $mform->addElement('static', 'matheditor', get_string('answer', 'qtype_mathexpression'),
                 $matheditor);

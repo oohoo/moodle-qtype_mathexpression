@@ -33,6 +33,15 @@
 
             var editor = new MathEditor(this, langHandler);
 
+            // Retrieve the button list from the form element (if it exists)
+            var buttonListElement = $('#id_buttonlist');
+            if(buttonListElement.length > 0) {
+                editor.setButtonList(buttonListElement.val(), true);
+                buttonListElement.bind('input propertychange', function() {
+                    editor.setButtonList(buttonListElement.val(), true);
+                });
+            }
+
             // Attach a callback to the onchange event of the editor and update a hidden field
             // within the form
             var inputField = $($(this).data('matheditor'));
