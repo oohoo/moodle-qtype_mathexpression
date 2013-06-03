@@ -14,13 +14,13 @@
  * *************************************************************************
  * ************************************************************************ */
 
-$plugin->version = 2013052200;
+$plugin->version = 2013060300;
 $plugin->requires = 2013042600;
 $plugin->maturity = MATURITY_BETA;
 $plugin->release = '1.0.0 (Build: 2013052200)';
 $plugin->component = 'qtype_mathexpression';
 $plugin->cron = 0;
 $plugin->dependencies = array(
-    'tinymce_matheditor' => 2013053100,
+    'tinymce_matheditor' => 2013060300,
     'filter_mathjax' => 2013052100
 );

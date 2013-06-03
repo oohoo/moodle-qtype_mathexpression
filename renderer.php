@@ -62,9 +62,15 @@ class qtype_mathexpression_renderer extends qtype_renderer {
                 'class' => 'matheditor-answer',
                 'value' => $currentanswer
             );
-            $input = html_writer::empty_tag('input', $inputattributes);
-            $result .= html_writer::tag('div', $input, array('class' => 'question-matheditor',
-                'data-matheditor' => 'input[name="'.$inputname.'"]')); // Selector for hidden field
+            $result .= html_writer::empty_tag('input', $inputattributes);
+            $buttonlistattributes = array(
+                'type' => 'hidden',
+                'id' => 'id_buttonlist',
+                'value' => $question->buttonlist
+            );
+            $result .= html_writer::empty_tag('input', $buttonlistattributes);
+            $result .= html_writer::tag('div', '', array('class' => 'question-matheditor',
+                'data-matheditor' => 'input[name="'.$inputname.'"]'));
         }
 
         return $result;

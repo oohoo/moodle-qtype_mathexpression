@@ -35,17 +35,43 @@ class qtype_mathexpression_edit_form extends question_edit_form {
         $PAGE->requires->js(new moodle_url('/question/type/mathexpression/mathexpression.js'));
         $PAGE->requires->css(new moodle_url('/question/type/mathexpression/styles.css'));
 
+        $mform->addElement('header', 'answerheader', get_string('answer', 'qtype_mathexpression'), true);
+        $mform->setExpanded('answerheader', 1);
+
         $mform->addElement('textarea', 'buttonlist', get_string('buttonlist', 'qtype_mathexpression'),
-                array('rows' => 6, 'cols' => 80));
+            array('rows' => 6, 'cols' => 80));
         $mform->addHelpButton('buttonlist', 'buttonlist', 'qtype_mathexpression');
         $mform->setDefault('buttonlist', get_string('buttonlist_default', 'qtype_mathexpression'));
 
-        $matheditor = $this->math_editor();
         $mform->addElement('static', 'matheditor', get_string('answer', 'qtype_mathexpression'),
-                $matheditor);
+            $this->math_editor('question-matheditor', '.answer-matheditor'));
 
-        $mform->addElement('hidden', 'answer', '&nbsp;', array('class' => 'matheditor-answer'));
+        $mform->addElement('hidden', 'answer', '', array('class' => 'answer-matheditor'));
         $mform->setType('answer', PARAM_RAW);
+
+        $comparetypes = array('simple' => get_string('simple', 'qtype_mathexpression'),
+            'full' => get_string('full', 'qtype_mathexpression'));
+
+        $select = $mform->addElement('select', 'comparetype', 
+            get_string('comparetype', 'qtype_mathexpression'), $comparetypes);
+        $select->setSelected('full');
+        $mform->addHelpButton('comparetype', 'comparetype', 'qtype_mathexpression');
+
+        $mform->addElement('header', 'excludedheader',
+            get_string('excludedexpressions', 'qtype_mathexpression'), true);
+        $mform->setExpanded('excludedheader', 1);
+
+        $mform->addElement('static', 'exclude_help', '', get_string('exclude_help', 'qtype_mathexpression'));
+
+        $repeated = array();
+        $repeated[] = $mform->createElement('static', 'matheditor',
+            get_string('exclude', 'qtype_mathexpression'),
+            $this->math_editor('exclude-matheditor', ''));
+        $repeated[] = $mform->createElement('hidden', 'exclude', '');
+        $mform->setType('exclude', PARAM_RAW);
+
+        $this->repeat_elements($repeated, 0, array(), 'exclude_number', 'add_exclude', 1,
+            get_string('addexcludedexpression', 'qtype_mathexpression'), true);
     }
 
     /**
@@ -56,6 +82,7 @@ class qtype_mathexpression_edit_form extends question_edit_form {
      * @return object $question the modified data
      */
     protected function data_preprocessing($question) {
+        global $DB;
         $question = parent::data_preprocessing($question);
 
         $question = $this->data_preprocessing_answers($question);
@@ -64,6 +91,17 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             $answer = array_shift($question->options->answers);
             $question->answer = $answer->answer;
         }
+
+        $options = $DB->get_record('qtype_mathexpression_options',array('questionid' => $question->id));
+        $question->buttonlist = $options->buttonlist;
+        $question->comparetype = $options->comparetype;
+
+        $excluded = $DB->get_records('qtype_mathexpression_exclude', array('questionid' => $question->id));
+        $question->exclude = array();
+        foreach($excluded as $excl) {
+            $question->exclude[] = $excl->answer;
+        }
+        $question->exclude_number = count($excluded);
 
         return $question;
     }
@@ -101,10 +139,12 @@ class qtype_mathexpression_edit_form extends question_edit_form {
     /**
      * Generates the HTML markup for the matheditor form element.
      *
+     * @param class the class value for the element
+     * @param identifier the hidden input field identifier
      * @return string html
      */
-    private function math_editor() {
-        $result = '<div class="question-matheditor" data-matheditor=".matheditor-answer">';
+    private function math_editor($class, $identifier) {
+        $result = '<div class="'.$class.'" data-matheditor="'.$identifier.'">';
         $result .= '</div>';
         return $result;
     }

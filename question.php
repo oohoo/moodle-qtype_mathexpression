@@ -20,6 +20,12 @@ class qtype_mathexpression_question extends question_graded_automatically {
     /** @var string valid LaTeX representation of the answer */
     public $correctanswer;
 
+    /** @var array of strings for excluded answers */
+    public $exclude;
+
+    /** @var string compare type, how the answer is evaluated */
+    public $comparetype;
+
     /**
      * Assigns an expected data type for the user answer. These types are defined in the
      * {@code lib/moodlelib.php} file and are prefixed by {@code PARAM_}. For this question type,
@@ -114,13 +120,26 @@ class qtype_mathexpression_question extends question_graded_automatically {
      * @return array (number, integer) corresponding to the fraction and the state.
      */
     public function grade_response(array $response) {
+        $fields = array('expr1' => $response['answer'],
+                'expr2' => $this->correctanswer);
+
+        $url = 'http://129.128.136.52:8080/sage/';
+
+        if($this->comparetype == 'full') {
+            $url .= 'full';
+            $fields['excluded'] = json_encode($this->exclude);
+            echo 'FULL';
+        } else if($this->comparetype == 'simple') {
+            $url .= 'simple';
+            echo 'SIMPLE';
+        } else {
+            throw new moodle_exception('Invalid Math Expression compare type');
+        }
+
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL,"http://129.128.136.52:8080/sage/simple");
+        curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(
-            array('expr1' => $response['answer'],
-                'expr2' => $this->correctanswer,
-                'vars' => 'a')));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($fields));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $server_response = curl_exec($ch);
