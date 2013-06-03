@@ -47,6 +47,12 @@ $string['pluginnamesummary'] = 'Question type that requires a mathematical expre
     .'answer. Evaluates the expression using a sophisticated Math Engine (SAGE) to compare '
     .'correctness';
 $string['pleaseeenteranswer'] = 'Please enter an answer';
+$string['sageserver'] = 'Sage Server';
+$string['sageserver_help'] = 'URL to a Sage server that is needed to perform expression '
+    .'comparisons. Please see the documentation within the Math Expression question type folder '
+    .'(and more specifically the server folder) for more details. To test your configuration '
+    .'visit <a href="'.$CFG->wwwroot.'/question/type/mathexpression/configcheck.php">'
+    .$CFG->wwwroot.'/question/type/mathexpression/configcheck.php</a>';
 $string['simple'] = 'Simple';
 $string['youranswer'] = 'Your Answer:';
 

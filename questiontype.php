@@ -61,8 +61,10 @@ class qtype_mathexpression extends question_type {
             $excluded = new stdClass();
             $excluded->questionid = $question->id;
             foreach($question->exclude as $expression) {
-                $excluded->answer = $expression;
-                $DB->insert_record('qtype_mathexpression_exclude', $excluded);
+                if($expression != '') {
+                    $excluded->answer = $expression;
+                    $DB->insert_record('qtype_mathexpression_exclude', $excluded);
+                }
             }
         }
 

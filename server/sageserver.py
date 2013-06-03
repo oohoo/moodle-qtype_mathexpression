@@ -13,8 +13,8 @@
 # * ************************************************************************ */
 
 import algebra
-import logging
 import os
+import web
 
 from sage.all import *
 from sage.calculus.calculus import symbolic_expression_from_string
@@ -36,8 +36,8 @@ def simple_compare(expr1, expr2, vars):
         @rtype: bool
         @return: true if the expressions are equal, false otherwise
     """
-    logging.info("Simple compare of '%s' to '%s' with variables %s" %
-                (expr1, expr2, vars))
+    web.debug("Simple compare of '%s' to '%s' with variables %s" %
+             (expr1, expr2, vars))
     expr1 = algebra.convert_latex(expr1)
     expr2 = algebra.convert_latex(expr2)
     f = symbolic_expression_from_string("(%s)-(%s)" % (expr1, expr2))
@@ -75,19 +75,22 @@ def full_compare(answer, response, vars, exclude=[]):
         @rtype: bool
         @return: true if the expressions are equal, false otherwise
     """
-    logging.info("Full compare of '%s' to '%s' with variables '%s' excluding '%s'" %
-                (answer, response, ','.join(vars), ';'.join(exclude)))
+    web.debug("Full compare of '%s' to '%s' with variables '%s' excluding '%s'" %
+             (answer, response, ','.join(vars), ';'.join(exclude)))
     try:
         answer = algebra.convert_latex(answer)
-        response = algebra.convert_latex(answer)
+        response = algebra.convert_latex(response)
         answer_expr = symbolic_expression_from_string(answer)
         response_expr = symbolic_expression_from_string(response)
     except SyntaxError, e:
-        logging.error("Error parsing answer and response expressions: %s" % e)
-        f = Fault(8000, "Error parsing answer and response expressions: %s" % e)
+        web.debug("Error parsing answer and response expressions: %s" % e)
+        f = "Error parsing answer and response expressions: %s" % e
         return f
     # First check for exlcuded responses
     for exc in exclude:
+        web.debug(exc)
+        exc = algebra.convert_latex(exc)
+        web.debug(exc)
         # Create and expression from the excluded string
         expr = symbolic_expression_from_string(exc)
         # Take a difference between the excluded expression and the
@@ -95,14 +98,24 @@ def full_compare(answer, response, vars, exclude=[]):
         diff = response_expr-expr
         # See if the difference has a representation of zero. If so it
         # matches with a simple comparison and so should be exlcuded.
+        web.debug(diff)
         if diff.__repr__() == '0':
             # Response is excluded so immediately return false
-            return False
+            return {
+                'expr1': answer,
+                'expr2': response,
+                'result': False
+            }
     # Create an expression that is the difference of the answer and response
     f = answer_expr-response_expr
     # Simply use the 'is_zero' method to determine if the expressions are
     # equal. There is no need to perform 'simplify_full'.
-    return f.is_zero()
+    result = {
+        'expr1': answer,
+        'expr2': response,
+        'result': f.is_zero()
+    }
+    return result
 
 
 def evaluate_expression(expr):

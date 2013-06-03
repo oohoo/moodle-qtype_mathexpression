@@ -25,7 +25,7 @@ class qtype_mathexpression_edit_form extends question_edit_form {
      * @param object $mform the object being built
      */
     protected function definition_inner($mform) {
-        global $PAGE;
+        global $PAGE, $DB;
         $PAGE->requires->jquery();
         $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/js/mathquill.min.js'));
         $PAGE->requires->css(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/css/mathquill.css'));
@@ -70,7 +70,12 @@ class qtype_mathexpression_edit_form extends question_edit_form {
         $repeated[] = $mform->createElement('hidden', 'exclude', '');
         $mform->setType('exclude', PARAM_RAW);
 
-        $this->repeat_elements($repeated, 0, array(), 'exclude_number', 'add_exclude', 1,
+        $number = 0;
+        if(isset($this->question->id)) {
+            $number = $DB->count_records('qtype_mathexpression_exclude', array('questionid' => $this->question->id));
+        }
+
+        $this->repeat_elements($repeated, $number, array(), 'exclude_number', 'add_exclude', 1,
             get_string('addexcludedexpression', 'qtype_mathexpression'), true);
     }
 
@@ -92,16 +97,18 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             $question->answer = $answer->answer;
         }
 
-        $options = $DB->get_record('qtype_mathexpression_options',array('questionid' => $question->id));
-        $question->buttonlist = $options->buttonlist;
-        $question->comparetype = $options->comparetype;
+        if (isset($question->id)) {
+            $options = $DB->get_record('qtype_mathexpression_options',array('questionid' => $question->id));
+            $question->buttonlist = $options->buttonlist;
+            $question->comparetype = $options->comparetype;
 
-        $excluded = $DB->get_records('qtype_mathexpression_exclude', array('questionid' => $question->id));
-        $question->exclude = array();
-        foreach($excluded as $excl) {
-            $question->exclude[] = $excl->answer;
+            $excluded = $DB->get_records('qtype_mathexpression_exclude', array('questionid' => $question->id));
+            $question->exclude = array();
+            foreach($excluded as $excl) {
+                $question->exclude[] = $excl->answer;
+            }
+            $question->exclude_number = count($excluded);
         }
-        $question->exclude_number = count($excluded);
 
         return $question;
     }

@@ -120,18 +120,21 @@ class qtype_mathexpression_question extends question_graded_automatically {
      * @return array (number, integer) corresponding to the fraction and the state.
      */
     public function grade_response(array $response) {
-        $fields = array('expr1' => $response['answer'],
-                'expr2' => $this->correctanswer);
+        global $CFG;
 
-        $url = 'http://129.128.136.52:8080/sage/';
+        $fields = array('expr1' => $this->correctanswer,
+                'expr2' => $response['answer']);
+
+        $url = $CFG->qtype_mathexpression_sageserver;
+        if($url == '') {
+            throw new moodle_exception('Must provide a Sage server URL in the Question Type settings');
+        }
 
         if($this->comparetype == 'full') {
-            $url .= 'full';
-            $fields['excluded'] = json_encode($this->exclude);
-            echo 'FULL';
+            $url .= '/full';
+            $fields['exclude'] = json_encode($this->exclude);
         } else if($this->comparetype == 'simple') {
-            $url .= 'simple';
-            echo 'SIMPLE';
+            $url .= '/simple';
         } else {
             throw new moodle_exception('Invalid Math Expression compare type');
         }
@@ -143,9 +146,9 @@ class qtype_mathexpression_question extends question_graded_automatically {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $server_response = curl_exec($ch);
-        echo $server_response;
+        curl_close($ch);
         $sage_result = json_decode($server_response);
-        print_object($sage_result);
+
         if($sage_result->result) {
             $fraction = 1.0;
         } else {
