@@ -3,6 +3,10 @@
 A [Moodle](http://www.moodle.org) question type that allows course instructors to create questions that
 require the student to submit a mathematical equation as an answer.
 
+**REQUIRES:**
+* [Math Editor](https://github.com/oohoo/moodle-tinymce_matheditor)
+* [MathJax Filter](https://github.com/oohoo/moodle-filter_mathjax)
+
 ![MathExpression](https://github.com/oohoo/moodle-qtype_mathexpression/blob/master/studentview.png?raw=true
  "Math Expression")
 
