@@ -46,7 +46,7 @@ class sage_evaluate:
 
 class sage_full:
     def GET(self):
-        args = web.input(expr1='', expr2='', vars='', exclude='')
+        args = web.input(expr1='', expr2='', vars='', exclude='[]')
         result = sageserver.full_compare(args.expr1, args.expr2, args.vars, json.loads(args.exclude))
         return json.dumps(result)
 
