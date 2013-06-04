@@ -1,9 +1,19 @@
+# Moodle Math Expression Question Type
+
+A [Moodle](http://www.moodle.org) question type that allows course instructors to create questions that
+require the student to submit a mathematical equation as an answer.
+
+
+
+### Question Type
+
+
 ### Python Sage Server
 
 This question type uses [Sage Math](http://www.sagemath.org/) to evaluate the correctness of a student's response.
 In order to achieve this, we created a simple Python HTTP server with a REST API. The question type's settings
 contain the parameters used to hook up to this service. See the server source code in the `server` directory
-for more information. Installation and running instructions are bellow:
+for more information. Installation and running instructions are bellow.
 
 #### Server Installation
 
@@ -36,7 +46,7 @@ deemed equivalent.<br/>
 The equations are echoed back into their algebraic equivalents, this is mostly for your own debugging purposes.
 
 **Full Compare**<br/>
-`http://your_server/sage/full?expr1=...&expr2=...&exclude=...`<br/><br/>
+`http://your_server/sage/full?expr1=...&expr2=...&exclude=[]...`<br/><br/>
 Performs a full comparison of the two given expressions. To perform the comparison, it parses both equations
 into the Sage Math symbolic representation, simplifies them and then subtracts them. If the result is 0, then
 the equations can be deemed equivalent. An optional list of excluded expressions can also be specified
