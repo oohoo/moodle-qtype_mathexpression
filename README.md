@@ -3,7 +3,8 @@
 A [Moodle](http://www.moodle.org) question type that allows course instructors to create questions that
 require the student to submit a mathematical equation as an answer.
 
-
+![MathExpression](https://github.com/oohoo/moodle-qtype_mathexpression/blob/master/studentview.png?raw=true
+ "Math Expression")
 
 ### Question Type
 
@@ -69,6 +70,21 @@ The equations are echoed back into their algebraic equivalents, this is mostly f
 Examples:<br/>
 * `sage/full?expr1=(x+1)(x+2)&expr2=(x+1)(x+2)&exclude=[(x+1)(x+2)]` returns `false`
 * `sage/full?expr1=(x+1)(x+2)&expr2=x^2+3x+2&exclude=[(x+1)(x+2)]` returns `true`
+
+#### Server Development
+
+This server uses the [Web.py](http://webpy.org/) library to provide the web server interface. Ensure
+this package is installed as part of your Sage Python environment. See the server installation instructions
+for details on how to do this.
+
+All server related code is located in the `server` folder.
+
+Breakdown of file functions:
+* `algebra.py` - Functionality that converts LaTeX equations into algebraic equivalents that can be understood
+  by Sage
+* `algebra_test.py` - Unit tests for the LaTeX to algebra conversion
+* `sageserver.py` - Interface functions between Python and Sage
+* `server.py` - Main server file, contains the GET and POST web handlers
 
 #### Server References
 
