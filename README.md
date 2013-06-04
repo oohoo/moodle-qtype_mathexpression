@@ -14,7 +14,7 @@ require the student to submit a mathematical equation as an answer.
 
 #### Installation
 
-1. Get the zip file `mathexpression.zip` (DOWNLOAD)
+1. Get the zip file `mathexpression.zip` ([DOWNLOAD](http://dl.bintray.com/raywainman/generic/mathexpression.zip?direct))
 2. To install this plugin, visit the Moodle plugin installation page and upload this zip as a **Question Type**
    the url is typically `http://moodle_root/admin/tool/installaddon/index.php`
 3. Go to the Math Expression settings page and update the URL to the Python Sage server, if you don't have one
