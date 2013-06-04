@@ -1,3 +1,17 @@
+/**
+ * *************************************************************************
+ * *                            MathExpression                            **
+ * *************************************************************************
+ * @package     question                                                  **
+ * @subpackage  mathexpression                                            **
+ * @name        MathExpression                                            **
+ * @copyright   oohoo.biz                                                 **
+ * @link        http://oohoo.biz                                          **
+ * @author      Raymond Wainman (wainman@ualberta.ca)                     **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later  **
+ * *************************************************************************
+ * ************************************************************************ */
+
 .matheditor-container {
     border: 1px solid #D1D1D1;
 }
