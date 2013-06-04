@@ -8,6 +8,20 @@ require the student to submit a mathematical equation as an answer.
 
 ### Question Type
 
+#### Installation
+
+1. Get the zip file `mathexpression.zip` (DOWNLOAD)
+2. To install this plugin, visit the Moodle plugin installation page and upload this zip as a **Question Type**
+   the url is typically `http://moodle_root/admin/tool/installaddon/index.php`
+3. Go to the Math Expression settings page and update the URL to the Python Sage server, if you don't have one
+   see the Server installation instructions below.
+
+If this fails, simply extract the zip into the `moodle_root/question/type` folder and visit the administration
+notifications page to complete the installation.
+
+#### References
+
+* http://docs.moodle.org/dev/Question_types
 
 ### Python Sage Server
 
@@ -25,6 +39,9 @@ for more information. Installation and running instructions are bellow.
   Python that is bundled with Sage) `sudo sage -python setup.py install`
 4. Navigate to this project's `server` folder
 5. Start the server `sage -python server.py` (a port can be specified by using the `-p` flag)
+
+This will create a server on your machine on port `8080` or the one you specified. Typically the url will be
+something like `http://your_machine:8080/sage`.
 
 #### Server API
 
