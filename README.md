@@ -1,9 +1,19 @@
+# Moodle Math Expression Question Type
+
+A [Moodle](http://www.moodle.org) question type that allows course instructors to create questions that
+require the student to submit a mathematical equation as an answer.
+
+
+
+### Question Type
+
+
 ### Python Sage Server
 
 This question type uses [Sage Math](http://www.sagemath.org/) to evaluate the correctness of a student's response.
 In order to achieve this, we created a simple Python HTTP server with a REST API. The question type's settings
 contain the parameters used to hook up to this service. See the server source code in the `server` directory
-for more information. Installation and running instructions are bellow:
+for more information. Installation and running instructions are bellow.
 
 #### Server Installation
 
@@ -18,17 +28,47 @@ for more information. Installation and running instructions are bellow:
 #### Server API
 
 **Simple Compare**<br/>
-`http://your_server/sage/simple?expr1=...&expr2=...&vars=...`<br/><br/>
-Performs a simple comparison of the two given expressions and the list of variables.<br/>
-* Parameter: `expr1` - a string representation of an expression, eg. `a+b+c/2`
-* Parameter: `expr2` - see `expr1`
-* Parameter: `vars` - a list of the variables that are found in the expressions, must be comma delimited,
-  eg. `a,b,c`
-* Returns: `true` or `false`
+`http://your_server/sage/simple?expr1=...&expr2=...`<br/><br/>
+Performs a simple comparison of the two given expressions. To perform the comparison, it parses both equations
+into the Sage Math symbolic representation and subtracts them. If the result is 0, then the equations can be
+deemed equivalent.<br/>
+* Parameter: `expr1` - a string representation of an expression, eg. `a+b+c/2`, can also be in LaTeX format
+* Parameter: `expr2` - same as above, eg. `\frac{a+b+c}{2}`
+* Returns: a JSON object containing three fields:
+
+```javascript
+{
+  'expr1': 'algebraic notation for expression 1'
+  'expr2': 'algebraic notation for expression 2'
+  'result': true or false
+}
+```
+The equations are echoed back into their algebraic equivalents, this is mostly for your own debugging purposes.
+
+**Full Compare**<br/>
+`http://your_server/sage/full?expr1=...&expr2=...&exclude=[]...`<br/><br/>
+Performs a full comparison of the two given expressions. To perform the comparison, it parses both equations
+into the Sage Math symbolic representation, simplifies them and then subtracts them. If the result is 0, then
+the equations can be deemed equivalent. An optional list of excluded expressions can also be specified
+as equations that evaluate to true, would represent an invalid answer. This is used to prevent the student
+from simply echoing the initial equation in the case a simplification is requested.<br/>
+* Parameter: `expr1` - a string representation of an expression, eg. `a+b+c/2`, can also be in LaTeX format
+* Parameter: `expr2` - same as above, eg. `\frac{a+b+c}{2}`
+* Parameter: `exclude` - an array of excluded expressions, these expressions can be in algebraic or LaTeX format
+* Returns: a JSON object containing three fields:
+
+```javascript
+{
+  'expr1': 'algebraic notation for expression 1'
+  'expr2': 'algebraic notation for expression 2'
+  'result': true or false
+}
+```
+The equations are echoed back into their algebraic equivalents, this is mostly for your own debugging purposes.
 
 Examples:<br/>
-* `sage/simple?expr1=a+b+c/2&expr2=a+b+(c/2)&vars=a,b,c` returns `false`
-* `sage/simple?expr1=a+b+c/2&expr2=(a+b+c)/2&vars=a,b,c` returns `true`
+* `sage/full?expr1=(x+1)(x+2)&expr2=(x+1)(x+2)&exclude=[(x+1)(x+2)]` returns `false`
+* `sage/full?expr1=(x+1)(x+2)&expr2=x^2+3x+2&exclude=[(x+1)(x+2)]` returns `true`
 
 #### Server References
 
