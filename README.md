@@ -3,10 +3,29 @@
 A [Moodle](http://www.moodle.org) question type that allows course instructors to create questions that
 require the student to submit a mathematical equation as an answer.
 
+**REQUIRES:**
+* [Math Editor](https://github.com/oohoo/moodle-tinymce_matheditor)
+* [MathJax Filter](https://github.com/oohoo/moodle-filter_mathjax)
 
+![MathExpression](https://github.com/oohoo/moodle-qtype_mathexpression/blob/master/studentview.png?raw=true
+ "Math Expression")
 
 ### Question Type
 
+#### Installation
+
+1. Get the zip file `mathexpression.zip` (DOWNLOAD)
+2. To install this plugin, visit the Moodle plugin installation page and upload this zip as a **Question Type**
+   the url is typically `http://moodle_root/admin/tool/installaddon/index.php`
+3. Go to the Math Expression settings page and update the URL to the Python Sage server, if you don't have one
+   see the Server installation instructions below.
+
+If this fails, simply extract the zip into the `moodle_root/question/type` folder and visit the administration
+notifications page to complete the installation.
+
+#### References
+
+* http://docs.moodle.org/dev/Question_types
 
 ### Python Sage Server
 
@@ -24,6 +43,9 @@ for more information. Installation and running instructions are bellow.
   Python that is bundled with Sage) `sudo sage -python setup.py install`
 4. Navigate to this project's `server` folder
 5. Start the server `sage -python server.py` (a port can be specified by using the `-p` flag)
+
+This will create a server on your machine on port `8080` or the one you specified. Typically the url will be
+something like `http://your_machine:8080/sage`.
 
 #### Server API
 
@@ -69,6 +91,21 @@ The equations are echoed back into their algebraic equivalents, this is mostly f
 Examples:<br/>
 * `sage/full?expr1=(x+1)(x+2)&expr2=(x+1)(x+2)&exclude=[(x+1)(x+2)]` returns `false`
 * `sage/full?expr1=(x+1)(x+2)&expr2=x^2+3x+2&exclude=[(x+1)(x+2)]` returns `true`
+
+#### Server Development
+
+This server uses the [Web.py](http://webpy.org/) library to provide the web server interface. Ensure
+this package is installed as part of your Sage Python environment. See the server installation instructions
+for details on how to do this.
+
+All server related code is located in the `server` folder.
+
+Breakdown of file functions:
+* `algebra.py` - Functionality that converts LaTeX equations into algebraic equivalents that can be understood
+  by Sage
+* `algebra_test.py` - Unit tests for the LaTeX to algebra conversion
+* `sageserver.py` - Interface functions between Python and Sage
+* `server.py` - Main server file, contains the GET and POST web handlers
 
 #### Server References
 
