@@ -16,6 +16,7 @@
 
 $string['addexcludedexpression'] = 'Add Excluded Expression';
 $string['answer'] = 'Answer';
+$string['buttongroups'] = 'Button Groups';
 $string['buttonlist'] = 'Button List';
 $string['buttonlist_help'] = 'This list specifies the buttons that will appear within the response'
     .' math editor and that will be available to the student. This should be a comma delimited '
@@ -37,7 +38,12 @@ $string['exclude_help'] = 'An optional list of excluded expressions can be defin
     .'match to the correct answer.<br/><br/>';
 $string['excludedexpressions'] = 'Excluded Expressions';
 $string['full'] = 'Full';
+$string['greeklower'] = 'Greek Lower Case';
+$string['greekupper'] = 'Greek Upper Case';
+$string['infinity'] = 'Infinity';
+$string['logs/exponential'] = 'Logarithms/Exponential';
 $string['mustprovideanswer'] = 'Must provide an answer';
+$string['operators'] = 'Operators';
 $string['pluginname'] = 'Math Expression';
 $string['pluginname_help'] = 'Question type that requires a mathematical expression as an answer';
 $string['pluginname_link'] = 'question/type/mathexpression';
@@ -54,13 +60,6 @@ $string['sageserver_help'] = 'URL to a Sage server that is needed to perform exp
     .'visit <a href="'.$CFG->wwwroot.'/question/type/mathexpression/configcheck.php">'
     .$CFG->wwwroot.'/question/type/mathexpression/configcheck.php</a>';
 $string['simple'] = 'Simple';
+$string['superscript'] = 'Superscript';
+$string['trigonometry'] = 'Trigonometry';
 $string['youranswer'] = 'Your Answer:';
-
-$string['buttonlist_default'] = 'superscript,fraction,natural_log,exponential,round_braces,log,'
-    .'sin,cos,tan,plus,minus,times,division,bullet,factorial,square_root,'
-    .'square_root_power,alpha,beta,gamma,delta,epsilon,zeta,eta,theta,iota,kappa,lambda,mu,nu,xi,'
-    .'omicron,pi,rho,sigma,tau,upsilon,phi,chi,psi,omega,alpha_uppercase,beta_uppercase,'
-    .'gamma_uppercase,delta_uppercase,epsilon_uppercase,zeta_uppercase,eta_uppercase,'
-    .'theta_uppercase,iota_uppercase,kappa_uppercase,lambda_uppercase,mu_uppercase,nu_uppercase,'
-    .'xi_uppercase,omicron_uppercase,pi_uppercase,rho_uppercase,sigma_uppercase,tau_uppercase,'
-    .'upsilon_uppercase,phi_uppercase,chi_uppercase,psi_uppercase,omega_uppercase,infinity';

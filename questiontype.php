@@ -60,10 +60,12 @@ class qtype_mathexpression extends question_type {
         if($question->comparetype == 'full') {
             $excluded = new stdClass();
             $excluded->questionid = $question->id;
-            foreach($question->exclude as $expression) {
-                if($expression != '') {
-                    $excluded->answer = $expression;
-                    $DB->insert_record('qtype_mathexpression_exclude', $excluded);
+            if(isset($question->exclude)) {
+                foreach($question->exclude as $expression) {
+                    if($expression != '') {
+                        $excluded->answer = $expression;
+                        $DB->insert_record('qtype_mathexpression_exclude', $excluded);
+                    }
                 }
             }
         }

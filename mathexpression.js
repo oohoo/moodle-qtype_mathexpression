@@ -29,12 +29,31 @@
             }
         };
 
+        var buttonListElement = $('#id_buttonlist');
+
+        var updateButtonList = function() {
+            buttonListElement.val('');
+            $('input[name="mathbuttongroups"]').each(function() {
+                if($(this).is(':checked')) {
+                    buttonListElement.val(buttonListElement.val() + ',' + $(this).data('math'));
+                }
+            });
+            buttonListElement.trigger('propertychange');
+        };
+
+        // Checkbox default values
+        $('input[name="mathbuttongroups"]').each(function() {
+            if(buttonListElement.val().indexOf($(this).data('math')) !== -1) {
+                $(this).attr('checked', true);
+            }
+            $(this).click(updateButtonList);
+        });
+
         // Bind the question fields with the Math Editor
         $('.question-matheditor').each(function() {
             var editor = new MathEditor(this, langHandler);
 
             // Retrieve the button list from the form element (if it exists)
-            var buttonListElement = $('#id_buttonlist');
             if(buttonListElement.length > 0) {
                 editor.setButtonList(buttonListElement.val(), true);
                 buttonListElement.bind('input propertychange', function() {

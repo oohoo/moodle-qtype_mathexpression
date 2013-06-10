@@ -18,6 +18,14 @@ defined('MOODLE_INTERNAL') || die();
 
 class qtype_mathexpression_edit_form extends question_edit_form {
 
+    private static $operator_buttons = 'fraction,round_braces,plus,minus,times,division,bullet,square_root';
+    private static $superscript_buttons = 'superscript';
+    private static $trigonometry_buttons = 'sin,cos,tan';
+    private static $log_buttons = 'natural_log,exponential,log';
+    private static $greek_lower_buttons = 'alpha,beta,gamma,delta,epsilon,zeta,eta,theta,iota,kappa,lambda,mu,nu,xi,omicron,pi,rho,sigma,tau,upsilon,phi,chi,psi,omega';
+    private static $greek_upper_buttons = 'alpha_uppercase,beta_uppercase,gamma_uppercase,delta_uppercase,epsilon_uppercase,zeta_uppercase,eta_uppercase,theta_uppercase,iota_uppercase,kappa_uppercase,lambda_uppercase,mu_uppercase,nu_uppercase,xi_uppercase,omicron_uppercase,pi_uppercase,rho_uppercase,sigma_uppercase,tau_uppercase,upsilon_uppercase,phi_uppercase,chi_uppercase,psi_uppercase,omega_uppercase';
+    private static $infinity_buttons = 'infinity';
+
     /**
      * Defines any custom form elements needed when creating the question.
      *
@@ -38,10 +46,26 @@ class qtype_mathexpression_edit_form extends question_edit_form {
         $mform->addElement('header', 'answerheader', get_string('answer', 'qtype_mathexpression'), true);
         $mform->setExpanded('answerheader', 1);
 
+        $mform->addElement('checkbox', 'mathbuttongroups', get_string('buttongroups', 'qtype_mathexpression'),
+            get_string('operators', 'qtype_mathexpression'), array('data-math' => self::$operator_buttons));
+        $mform->addElement('checkbox', 'mathbuttongroups', '', get_string('superscript', 'qtype_mathexpression'),
+            array('data-math' => self::$superscript_buttons));
+        $mform->addElement('checkbox', 'mathbuttongroups', '', get_string('trigonometry', 'qtype_mathexpression'),
+            array('data-math' => self::$trigonometry_buttons));
+        $mform->addElement('checkbox', 'mathbuttongroups', '', get_string('logs/exponential', 'qtype_mathexpression'),
+            array('data-math' => self::$log_buttons));
+        $mform->addElement('checkbox', 'mathbuttongroups', '', get_string('greeklower', 'qtype_mathexpression'),
+            array('data-math' => self::$greek_lower_buttons));
+        $mform->addElement('checkbox', 'mathbuttongroups', '', get_string('greekupper', 'qtype_mathexpression'),
+            array('data-math' => self::$greek_upper_buttons));
+        $mform->addElement('checkbox', 'mathbuttongroups', '', get_string('infinity', 'qtype_mathexpression'),
+            array('data-math' => self::$infinity_buttons));
+
         $mform->addElement('textarea', 'buttonlist', get_string('buttonlist', 'qtype_mathexpression'),
             array('rows' => 6, 'cols' => 80));
         $mform->addHelpButton('buttonlist', 'buttonlist', 'qtype_mathexpression');
-        $mform->setDefault('buttonlist', get_string('buttonlist_default', 'qtype_mathexpression'));
+        $mform->setDefault('buttonlist', self::$operator_buttons.','.self::$superscript_buttons.','.self::$trigonometry_buttons
+            .','.self::$log_buttons.','.self::$greek_lower_buttons.','.self::$greek_upper_buttons.','.self::$infinity_buttons);
 
         $mform->addElement('static', 'matheditor', get_string('answer', 'qtype_mathexpression'),
             $this->math_editor('question-matheditor', '.answer-matheditor'));
