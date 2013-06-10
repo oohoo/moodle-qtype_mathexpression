@@ -34,10 +34,8 @@ class backup_qtype_mathexpression_plugin extends backup_qtype_plugin {
         $plugin->add_child($pluginwrapper);
 
         // Now create the qtype own structures.
-        $options = new backup_nested_element('mathexpression_options', array('id'), array(
-                'responseformat', 'responsefieldlines', 'attachments',
-                'graderinfo', 'graderinfoformat', 'responsetemplate',
-                'responsetemplateformat'));
+        $options = new backup_nested_element('options', array('id'), array(
+                'buttonlist', 'comparetype'));
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($options);
@@ -45,6 +43,16 @@ class backup_qtype_mathexpression_plugin extends backup_qtype_plugin {
         // Set source to populate the data.
         $options->set_source_table('qtype_mathexpression_options',
                 array('questionid' => backup::VAR_PARENTID));
+
+        // Excludes
+        $excludes = new backup_nested_element('excludes');
+        $pluginwrapper->add_child($excludes);
+
+        $exclude = new backup_nested_element('exclude', array('id'), array(
+                'answer'));
+        $excludes->add_child($exclude);
+
+        $exclude->set_source_table('qtype_mathexpression_exclude', array('questionid' => backup::VAR_PARENTID));
 
         return $plugin;
     }
