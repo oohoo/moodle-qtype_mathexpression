@@ -65,4 +65,7 @@ $string['superscript'] = 'Superscript';
 $string['trigonometry'] = 'Trigonometry';
 $string['variable'] = 'Variable';
 $string['variables'] = 'Variables';
+$string['vars_help'] = 'Define all the variables in the equation, these will show up in the student\'s '
+    .'answer editor under a seperate tab called "variables".<br/>These are also used when evaluating the '
+    .'correctness of the answer.<br/><br/>';
 $string['youranswer'] = 'Your Answer:';

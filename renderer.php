@@ -70,7 +70,8 @@ class qtype_mathexpression_renderer extends qtype_renderer {
             );
             $result .= html_writer::empty_tag('input', $buttonlistattributes);
             $result .= html_writer::tag('div', '', array('class' => 'question-matheditor',
-                'data-matheditor' => 'input[name="'.$inputname.'"]'));
+                'data-matheditor' => 'input[name="'.$inputname.'"]',
+                'data-matheditorvars' => json_encode($question->variable)));
         }
 
         return $result;

@@ -86,6 +86,8 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             get_string('variables', 'qtype_mathexpression'), true);
         $mform->setExpanded('variablesheader', 1);
 
+        $mform->addElement('static', 'vars_help', '', get_string('vars_help', 'qtype_mathexpression'));
+
         $repeated_vars = array();
         $repeated_vars[] = $mform->createElement('static', 'matheditor',
             get_string('variable', 'qtype_mathexpression'),

@@ -52,6 +52,7 @@
         // Bind the question fields with the Math Editor
         $('.question-matheditor').each(function() {
             var editor = new MathEditor(this, langHandler);
+            editor.setVariables($(this).data('matheditorvars'));
 
             // Retrieve the button list from the form element (if it exists)
             if(buttonListElement.length > 0) {
