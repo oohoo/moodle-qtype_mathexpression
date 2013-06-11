@@ -88,6 +88,7 @@ symbol_conversions = [
     SymbolConversion('\\gamma', 'gamma'),
     SymbolConversion('\\Gamma', 'Gamma'),
     SymbolConversion('\\delta', 'delta'),
+    SymbolConversion('\\Delta', 'Delta'),
     SymbolConversion('\\epsilon', 'epsilon'),
     SymbolConversion('\\zeta', 'zeta'),
     SymbolConversion('\\eta', 'eta'),
