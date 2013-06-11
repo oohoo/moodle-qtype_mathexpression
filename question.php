@@ -123,7 +123,7 @@ class qtype_mathexpression_question extends question_graded_automatically {
         global $CFG;
 
         $fields = array('expr1' => $this->correctanswer,
-                'expr2' => $response['answer']);
+                'expr2' => $response['answer'], 'vars' => json_encode($this->variable));
 
         $url = $CFG->qtype_mathexpression_sageserver;
         if($url == '') {

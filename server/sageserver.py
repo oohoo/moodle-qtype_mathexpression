@@ -22,7 +22,7 @@ from sage.misc.preparser import preparse
 from exceptions import SyntaxError
 
 
-def simple_compare(expr1, expr2, vars):
+def simple_compare(expr1, expr2, vars=[]):
     """ Performs a simple symbolic comparison between two expressions.
         This method will perform a very simple comparision between two
         algebraic expressions. No expansion or factorization is performed
@@ -39,6 +39,8 @@ def simple_compare(expr1, expr2, vars):
     """
     web.debug("Simple compare of '%s' to '%s' with variables %s" %
              (expr1, expr2, vars))
+    expr1 = replace_variables(expr1, vars)
+    expr2 = replace_variables(expr2, vars)
     expr1 = algebra.convert_latex(expr1)
     expr2 = algebra.convert_latex(expr2)
 
@@ -61,7 +63,7 @@ def simple_compare(expr1, expr2, vars):
     return result
 
 
-def full_compare(answer, response, vars, exclude=[]):
+def full_compare(answer, response, vars=[], exclude=[]):
     """ Performs a full symbolic comparison between two expressions.
         This method will perform a full comparison between the two
         expressions passed to it. This will involve fully simplifying each
@@ -88,6 +90,8 @@ def full_compare(answer, response, vars, exclude=[]):
     web.debug("Full compare of '%s' to '%s' with variables '%s' excluding '%s'" %
              (answer, response, ','.join(vars), ';'.join(exclude)))
     try:
+        answer = replace_variables(answer, vars)
+        response = replace_variables(response, vars)
         answer = algebra.convert_latex(answer)
         response = algebra.convert_latex(response)
         sage.misc.preparser.implicit_multiplication(10)
@@ -141,3 +145,9 @@ def full_compare(answer, response, vars, exclude=[]):
 def evaluate_expression(expr):
     f = symbolic_expression_from_string(expr)
     return f.__repr__()
+
+
+def replace_variables(expr, vars):
+    for var in vars:
+        expr = expr.replace(var, '(' + var + ')')
+    return expr

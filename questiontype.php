@@ -120,7 +120,7 @@ class qtype_mathexpression extends question_type {
         $variables = $DB->get_records('qtype_mathexpression_vars', array('questionid' => $questiondata->id));
         $question->variable = array();
         foreach($variables as $var) {
-            $question->variable[] = $var->answer;
+            $question->variable[] = $var->variable;
         }
     }
 }
