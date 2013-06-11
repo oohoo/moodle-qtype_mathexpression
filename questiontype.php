@@ -40,6 +40,10 @@ class qtype_mathexpression extends question_type {
         $oldanswers = $DB->delete_records('qtype_mathexpression_exclude',
             array('questionid' => $question->id));
 
+        // Remove old variables
+        $oldanswers = $DB->delete_records('qtype_mathexpression_vars',
+            array('questionid' => $question->id));
+
         // Insert new answer
         $answer = new stdClass();
         $answer->question = $question->id;
@@ -66,6 +70,18 @@ class qtype_mathexpression extends question_type {
                         $excluded->answer = $expression;
                         $DB->insert_record('qtype_mathexpression_exclude', $excluded);
                     }
+                }
+            }
+        }
+
+        // Insert variables
+        if(isset($question->variable)) {
+            $var = new stdClass();
+            $var->questionid = $question->id;
+            foreach($question->variable as $expr) {
+                if($expr != '') {
+                    $var->variable = $expr;
+                    $DB->insert_record('qtype_mathexpression_vars', $var);
                 }
             }
         }
@@ -99,6 +115,12 @@ class qtype_mathexpression extends question_type {
         $question->exclude = array();
         foreach($excluded as $excl) {
             $question->exclude[] = $excl->answer;
+        }
+
+        $variables = $DB->get_records('qtype_mathexpression_vars', array('questionid' => $questiondata->id));
+        $question->variable = array();
+        foreach($variables as $var) {
+            $question->variable[] = $var->answer;
         }
     }
 }

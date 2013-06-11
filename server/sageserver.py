@@ -18,6 +18,7 @@ import web
 
 from sage.all import *
 from sage.calculus.calculus import symbolic_expression_from_string
+from sage.misc.preparser import preparse
 from exceptions import SyntaxError
 
 
@@ -40,6 +41,15 @@ def simple_compare(expr1, expr2, vars):
              (expr1, expr2, vars))
     expr1 = algebra.convert_latex(expr1)
     expr2 = algebra.convert_latex(expr2)
+
+    sage.misc.preparser.implicit_multiplication(10)
+    web.debug("Expr1: " + expr1)
+    web.debug("Expr2: " + expr2)
+    web.debug("Level: " + str(sage.misc.preparser.implicit_multiplication()))
+    expr1 = preparse(expr1).replace('Integer', '').replace('RealNumber', '')
+    expr2 = preparse(expr2).replace('Integer', '').replace('RealNumber', '')
+    web.debug("Expr1: " + expr1)
+    web.debug("Expr2: " + expr2)
     f = symbolic_expression_from_string("(%s)-(%s)" % (expr1, expr2))
     # Simply check to see if the representation of the expression is
     # a string containing the single character '0'.
@@ -80,6 +90,14 @@ def full_compare(answer, response, vars, exclude=[]):
     try:
         answer = algebra.convert_latex(answer)
         response = algebra.convert_latex(response)
+        sage.misc.preparser.implicit_multiplication(10)
+        web.debug("Answer: " + answer)
+        web.debug("Response: " + response)
+        web.debug("Level: " + str(sage.misc.preparser.implicit_multiplication()))
+        answer = preparse(answer).replace('Integer', '').replace('RealNumber', '')
+        response = preparse(response).replace('Integer', '').replace('RealNumber', '')
+        web.debug("Answer: " + answer)
+        web.debug("Response: " + response)
         answer_expr = symbolic_expression_from_string(answer)
         response_expr = symbolic_expression_from_string(response)
     except SyntaxError, e:
@@ -88,9 +106,8 @@ def full_compare(answer, response, vars, exclude=[]):
         return f
     # First check for exlcuded responses
     for exc in exclude:
-        web.debug(exc)
         exc = algebra.convert_latex(exc)
-        web.debug(exc)
+        exc = preparse(exc)
         # Create and expression from the excluded string
         expr = symbolic_expression_from_string(exc)
         # Take a difference between the excluded expression and the
@@ -107,7 +124,10 @@ def full_compare(answer, response, vars, exclude=[]):
                 'result': False
             }
     # Create an expression that is the difference of the answer and response
-    f = answer_expr-response_expr
+    web.debug('FINAL %s - %s' % (answer_expr, response_expr))
+    f = (answer_expr)-(response_expr)
+    web.debug('RESULT %s' % f)
+    web.debug('RESULT %s' % f.simplify_full())
     # Simply use the 'is_zero' method to determine if the expressions are
     # equal. There is no need to perform 'simplify_full'.
     result = {

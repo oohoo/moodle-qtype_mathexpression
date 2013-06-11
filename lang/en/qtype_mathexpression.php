@@ -15,6 +15,7 @@
  * ************************************************************************ */
 
 $string['addexcludedexpression'] = 'Add Excluded Expression';
+$string['addvariable'] = 'Add Variable';
 $string['answer'] = 'Answer';
 $string['buttongroups'] = 'Button Groups';
 $string['buttonlist'] = 'Button List';
@@ -62,4 +63,6 @@ $string['sageserver_help'] = 'URL to a Sage server that is needed to perform exp
 $string['simple'] = 'Simple';
 $string['superscript'] = 'Superscript';
 $string['trigonometry'] = 'Trigonometry';
+$string['variable'] = 'Variable';
+$string['variables'] = 'Variables';
 $string['youranswer'] = 'Your Answer:';

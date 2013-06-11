@@ -96,6 +96,29 @@
             editor.setLatex(inputField.val());
         });
 
+        // Bind the question fields with the Math Editor
+        $('.variable-matheditor').each(function(index) {
+            var editor = new MathEditor(this, langHandler);
+            editor.setButtonList('alpha,beta,gamma,delta,epsilon,zeta,eta,theta,iota,kappa,lambda,'
+                + 'mu,nu,xi,omicron,pi,rho,sigma,tau,upsilon,phi,chi,psi,omega,alpha_uppercase,'
+                + 'beta_uppercase,gamma_uppercase,delta_uppercase,epsilon_uppercase,zeta_uppercase,'
+                + 'eta_uppercase,theta_uppercase,iota_uppercase,kappa_uppercase,lambda_uppercase,'
+                + 'mu_uppercase,nu_uppercase,xi_uppercase,omicron_uppercase,pi_uppercase,'
+                + 'rho_uppercase,sigma_uppercase,tau_uppercase,upsilon_uppercase,phi_uppercase,'
+                + 'chi_uppercase,psi_uppercase,omega_uppercase,vector,hat,subscript,superscript,'
+                + 'hbar', true);
+
+            // Attach a callback to the onchange event of the editor and update a hidden field
+            // within the form
+            var inputField = $('input[name="variable[' + index + ']"]');
+            editor.onChange(function(latex) {
+                inputField.val(latex);
+            });
+
+            // Retrieve any existing data from this field and render it within the editor
+            editor.setLatex(inputField.val());
+        });
+
         // Only show the exclude fields when the compare type is full
         $('select#id_comparetype').change(function() {
             if($(this).val() === 'full') {

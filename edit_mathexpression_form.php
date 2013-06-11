@@ -81,6 +81,27 @@ class qtype_mathexpression_edit_form extends question_edit_form {
         $select->setSelected('full');
         $mform->addHelpButton('comparetype', 'comparetype', 'qtype_mathexpression');
 
+        // Variables
+        $mform->addElement('header', 'variablesheader',
+            get_string('variables', 'qtype_mathexpression'), true);
+        $mform->setExpanded('variablesheader', 1);
+
+        $repeated_vars = array();
+        $repeated_vars[] = $mform->createElement('static', 'matheditor',
+            get_string('variable', 'qtype_mathexpression'),
+            $this->math_editor('variable-matheditor', ''));
+        $repeated_vars[] = $mform->createElement('hidden', 'variable', '');
+        $mform->setType('variable', PARAM_RAW);
+
+        $number_vars = 0;
+        if(isset($this->question->id)) {
+            $number_vars = $DB->count_records('qtype_mathexpression_vars', array('questionid' => $this->question->id));
+        }
+
+        $this->repeat_elements($repeated_vars, $number_vars, array(), 'exclude_number', 'add_exclude', 1,
+            get_string('addvariable', 'qtype_mathexpression'), true);
+
+        // Excludes
         $mform->addElement('header', 'excludedheader',
             get_string('excludedexpressions', 'qtype_mathexpression'), true);
         $mform->setExpanded('excludedheader', 1);
@@ -132,6 +153,13 @@ class qtype_mathexpression_edit_form extends question_edit_form {
                 $question->exclude[] = $excl->answer;
             }
             $question->exclude_number = count($excluded);
+
+            $variables = $DB->get_records('qtype_mathexpression_vars', array('questionid' => $question->id));
+            $question->variable = array();
+            foreach($variables as $var) {
+                $question->variable[] = $var->variable;
+            }
+            $question->variable_number = count($variables);
         }
 
         return $question;
