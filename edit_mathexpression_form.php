@@ -65,7 +65,7 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             array('rows' => 6, 'cols' => 80));
         $mform->addHelpButton('buttonlist', 'buttonlist', 'qtype_mathexpression');
         $mform->setDefault('buttonlist', self::$operator_buttons.','.self::$superscript_buttons.','.self::$trigonometry_buttons
-            .','.self::$log_buttons.','.self::$greek_lower_buttons.','.self::$greek_upper_buttons.','.self::$infinity_buttons);
+            .','.self::$log_buttons.','.','.self::$infinity_buttons);
 
         $mform->addElement('static', 'matheditor', get_string('answer', 'qtype_mathexpression'),
             $this->math_editor('question-matheditor', '.answer-matheditor'));
@@ -100,7 +100,7 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             $number_vars = $DB->count_records('qtype_mathexpression_vars', array('questionid' => $this->question->id));
         }
 
-        $this->repeat_elements($repeated_vars, $number_vars, array(), 'exclude_number', 'add_exclude', 1,
+        $this->repeat_elements($repeated_vars, $number_vars, array(), 'variable_number', 'add_variable', 1,
             get_string('addvariable', 'qtype_mathexpression'), true);
 
         // Excludes

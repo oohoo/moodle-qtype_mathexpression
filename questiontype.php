@@ -27,6 +27,7 @@ class qtype_mathexpression extends question_type {
      */
     public function save_question_options($question) {
         global $DB;
+
         $result = new stdClass();
 
         // Remove old answer
