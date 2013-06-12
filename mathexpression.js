@@ -56,9 +56,9 @@
 
             // Retrieve the button list from the form element (if it exists)
             if(buttonListElement.length > 0) {
-                editor.setButtonList(buttonListElement.val(), true);
+                editor.setButtonList(buttonListElement.val(), true, true);
                 buttonListElement.bind('input propertychange', function() {
-                    editor.setButtonList(buttonListElement.val(), true);
+                    editor.setButtonList(buttonListElement.val(), true, true);
                 });
             }
 
