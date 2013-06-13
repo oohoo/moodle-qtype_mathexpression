@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/mathexpression/db" VERSION="20130611" COMMENT="XMLDB file for Moodle question/type/mathexpression"
+<XMLDB PATH="question/type/mathexpression/db" VERSION="20130613" COMMENT="XMLDB file for Moodle question/type/mathexpression"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -10,6 +10,7 @@
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="buttonlist" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="A list of the buttons to show in the student's answer editor"/>
         <FIELD NAME="comparetype" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="simple" SEQUENCE="false" COMMENT="The type of comparison to do on the student response, basically what method is used for grading"/>
+        <FIELD NAME="answer_mathml" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -21,6 +22,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="answer" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The expression that must be excluded when evaluating (ie if the student has this response, it is incorrect)"/>
+        <FIELD NAME="answer_mathml" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -31,6 +33,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="variable" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="variable_mathml" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

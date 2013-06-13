@@ -39,5 +39,31 @@ function xmldb_qtype_mathexpression_upgrade($oldversion) {
         // Mathexpression savepoint reached.
         upgrade_plugin_savepoint(true, 2013061100, 'qtype', 'mathexpression');
     }
+
+    if ($oldversion < 2013061300) {
+        $table = new xmldb_table('qtype_mathexpression_options');
+        $field = new xmldb_field('answer_mathml', XMLDB_TYPE_TEXT, null, null, null, null, null, 'comparetype');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('qtype_mathexpression_exclude');
+        $field = new xmldb_field('answer_mathml', XMLDB_TYPE_TEXT, null, null, null, null, null, 'answer');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('qtype_mathexpression_vars');
+        $field = new xmldb_field('variable_mathml', XMLDB_TYPE_TEXT, null, null, null, null, null, 'variable');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Mathexpression savepoint reached.
+        upgrade_plugin_savepoint(true, 2013061300, 'qtype', 'mathexpression');
+    }
 }
 

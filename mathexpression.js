@@ -50,7 +50,7 @@
         });
 
         // Bind the question fields with the Math Editor
-        $('.question-matheditor').each(function() {
+        $('.question-matheditor').each(function(index) {
             var editor = new MathEditor(this, langHandler);
             editor.setVariables($(this).data('matheditorvars'));
 
@@ -65,7 +65,24 @@
             // Attach a callback to the onchange event of the editor and update a hidden field
             // within the form
             var inputField = $($(this).data('matheditor'));
+            var inputFieldMathml = $($(this).data('matheditor-mathml'));
+
+            var mathjaxdiv = $('<div style="display:none" id="question-matheditor-' + index + '"></div>').appendTo(this);
+            mathjaxdiv.html('\\(' + inputField.val() + '\\)');
+            MathJax.Hub.Queue(['Typeset', MathJax.Hub, '#question-matheditor-' + index]);
+            MathJax.Hub.Queue(function() {
+                var math = MathJax.Hub.getAllJax('question-matheditor-' + index)[0];
+                inputFieldMathml.val(math.root.toMathML());
+            });
+
             editor.onChange(function(latex) {
+                MathJax.Hub.Queue(function() {
+                    var math = MathJax.Hub.getAllJax('question-matheditor-' + index)[0];
+                    MathJax.Hub.Queue(['Text', math, latex]);
+                    MathJax.Hub.Queue(function() {
+                        inputFieldMathml.val(math.root.toMathML());
+                    });
+                });
                 inputField.val(latex);
             });
 
@@ -89,7 +106,24 @@
             // Attach a callback to the onchange event of the editor and update a hidden field
             // within the form
             var inputField = $('input[name="exclude[' + index + ']"]');
+            var inputFieldMathml = $('input[name="exclude_mathml[' + index + ']"]');
+
+            var mathjaxdiv = $('<div style="display:none" id="exclude-matheditor-' + index + '"></div>').appendTo(this);
+            mathjaxdiv.html('\\(' + inputField.val() + '\\)');
+            MathJax.Hub.Queue(['Typeset', MathJax.Hub, '#exclude-matheditor-' + index]);
+            MathJax.Hub.Queue(function() {
+                var math = MathJax.Hub.getAllJax('exclude-matheditor-' + index)[0];
+                inputFieldMathml.val(math.root.toMathML());
+            });
+
             editor.onChange(function(latex) {
+                MathJax.Hub.Queue(function() {
+                    var math = MathJax.Hub.getAllJax('exclude-matheditor-' + index)[0];
+                    MathJax.Hub.Queue(['Text', math, latex]);
+                    MathJax.Hub.Queue(function() {
+                        inputFieldMathml.val(math.root.toMathML());
+                    });
+                });
                 inputField.val(latex);
             });
 
@@ -112,7 +146,24 @@
             // Attach a callback to the onchange event of the editor and update a hidden field
             // within the form
             var inputField = $('input[name="variable[' + index + ']"]');
+            var inputFieldMathml = $('input[name="variable_mathml[' + index + ']"]');
+
+            var mathjaxdiv = $('<div style="display:none" id="variable-matheditor-' + index + '"></div>').appendTo(this);
+            mathjaxdiv.html('\\(' + inputField.val() + '\\)');
+            MathJax.Hub.Queue(['Typeset', MathJax.Hub, '#variable-matheditor-' + index]);
+            MathJax.Hub.Queue(function() {
+                var math = MathJax.Hub.getAllJax('variable-matheditor-' + index)[0];
+                inputFieldMathml.val(math.root.toMathML());
+            });
+
             editor.onChange(function(latex) {
+                MathJax.Hub.Queue(function() {
+                    var math = MathJax.Hub.getAllJax('variable-matheditor-' + index)[0];
+                    MathJax.Hub.Queue(['Text', math, latex]);
+                    MathJax.Hub.Queue(function() {
+                        inputFieldMathml.val(math.root.toMathML());
+                    });
+                });
                 inputField.val(latex);
             });
 

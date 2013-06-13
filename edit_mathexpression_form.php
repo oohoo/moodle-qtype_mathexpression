@@ -68,10 +68,13 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             .','.self::$log_buttons.','.','.self::$infinity_buttons);
 
         $mform->addElement('static', 'matheditor', get_string('answer', 'qtype_mathexpression'),
-            $this->math_editor('question-matheditor', '.answer-matheditor'));
+           $this->math_editor('question-matheditor', '.answer-matheditor', '.answer-mathml-matheditor'));
 
         $mform->addElement('hidden', 'answer', '', array('class' => 'answer-matheditor'));
         $mform->setType('answer', PARAM_RAW);
+
+        $mform->addElement('hidden', 'answer_mathml', '', array('class' => 'answer-mathml-matheditor'));
+        $mform->setType('answer_mathml', PARAM_RAW);
 
         $comparetypes = array('simple' => get_string('simple', 'qtype_mathexpression'),
             'full' => get_string('full', 'qtype_mathexpression'));
@@ -93,7 +96,9 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             get_string('variable', 'qtype_mathexpression'),
             $this->math_editor('variable-matheditor', ''));
         $repeated_vars[] = $mform->createElement('hidden', 'variable', '');
+        $repeated_vars[] = $mform->createElement('hidden', 'variable_mathml', '');
         $mform->setType('variable', PARAM_RAW);
+        $mform->setType('variable_mathml', PARAM_RAW);
 
         $number_vars = 0;
         if(isset($this->question->id)) {
@@ -115,7 +120,9 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             get_string('exclude', 'qtype_mathexpression'),
             $this->math_editor('exclude-matheditor', ''));
         $repeated[] = $mform->createElement('hidden', 'exclude', '');
+        $repeated[] = $mform->createElement('hidden', 'exclude_mathml', '');
         $mform->setType('exclude', PARAM_RAW);
+        $mform->setType('exclude_mathml', PARAM_RAW);
 
         $number = 0;
         if(isset($this->question->id)) {
@@ -148,18 +155,23 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             $options = $DB->get_record('qtype_mathexpression_options',array('questionid' => $question->id));
             $question->buttonlist = $options->buttonlist;
             $question->comparetype = $options->comparetype;
+            $question->answer_mathml = $options->answer_mathml;
 
             $excluded = $DB->get_records('qtype_mathexpression_exclude', array('questionid' => $question->id));
             $question->exclude = array();
+            $question->exclude_mathml = array();
             foreach($excluded as $excl) {
                 $question->exclude[] = $excl->answer;
+                $question->exclude_mathml[] = $excl->answer_mathml;
             }
             $question->exclude_number = count($excluded);
 
             $variables = $DB->get_records('qtype_mathexpression_vars', array('questionid' => $question->id));
             $question->variable = array();
+            $question->variable_mathml = array();
             foreach($variables as $var) {
                 $question->variable[] = $var->variable;
+                $question->variable_mathml[] = $var->variable_mathml;
             }
             $question->variable_number = count($variables);
         }
@@ -204,8 +216,9 @@ class qtype_mathexpression_edit_form extends question_edit_form {
      * @param identifier the hidden input field identifier
      * @return string html
      */
-    private function math_editor($class, $identifier) {
-        $result = '<div class="'.$class.'" data-matheditor="'.$identifier.'">';
+    private function math_editor($class, $identifier, $identifier_mathml='') {
+        $result = '<div class="'.$class.'" data-matheditor="'.$identifier.'" ';
+        $result .= 'data-matheditor-mathml="'.$identifier_mathml.'">';
         $result .= '</div>';
         return $result;
     }

@@ -59,6 +59,7 @@ class qtype_mathexpression extends question_type {
         $options->questionid = $question->id;
         $options->buttonlist = $question->buttonlist;
         $options->comparetype = $question->comparetype;
+        $options->answer_mathml = $question->answer_mathml;
         $options->id = $DB->insert_record('qtype_mathexpression_options', $options);
 
         // Insert excluded expressions (if applicable)
@@ -66,9 +67,12 @@ class qtype_mathexpression extends question_type {
             $excluded = new stdClass();
             $excluded->questionid = $question->id;
             if(isset($question->exclude)) {
-                foreach($question->exclude as $expression) {
+                for($i = 0; $i < sizeof($question->exclude); $i++) {
+                    $expression = $question->exclude[$i];
+                    $expression_mathml = $question->exclude_mathml[$i];
                     if($expression != '') {
                         $excluded->answer = $expression;
+                        $excluded->answer_mathml = $expression_mathml;
                         $DB->insert_record('qtype_mathexpression_exclude', $excluded);
                     }
                 }
@@ -79,9 +83,12 @@ class qtype_mathexpression extends question_type {
         if(isset($question->variable)) {
             $var = new stdClass();
             $var->questionid = $question->id;
-            foreach($question->variable as $expr) {
+            for($i = 0; $i < sizeof($question->variable); $i++) {
+                $expr = $question->variable[$i];
+                $expr_mathml = $question->variable_mathml[$i];
                 if($expr != '') {
                     $var->variable = $expr;
+                    $var->variable_mathml = $expr_mathml;
                     $DB->insert_record('qtype_mathexpression_vars', $var);
                 }
             }
