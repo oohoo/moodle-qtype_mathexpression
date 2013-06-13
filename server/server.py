@@ -26,18 +26,8 @@ urls = (
 
 class sage_simple:
     def GET(self):
-        args = web.input(expr1='', expr2='', vars='')
-        result = sageserver.simple_compare(args.expr1, args.expr2, json.loads(args.vars))
-        return json.dumps(result)
-
-    def POST(self):
-        return self.GET()
-
-
-class sage_evaluate:
-    def GET(self):
-        args = web.input(expr='')
-        result = sageserver.evaluate_expression(args.expr)
+        args = web.input(answer='', response='', vars='[]')
+        result = sageserver.simple_compare(args.answer, args.response, json.loads(args.vars))
         return json.dumps(result)
 
     def POST(self):
@@ -46,8 +36,9 @@ class sage_evaluate:
 
 class sage_full:
     def GET(self):
-        args = web.input(expr1='', expr2='', vars='[]', exclude='[]')
-        result = sageserver.full_compare(args.expr1, args.expr2, json.loads(args.vars), json.loads(args.exclude))
+        args = web.input(answer='', response='', vars='[]', exclude='[]')
+        result = sageserver.full_compare(args.answer, args.response, json.loads(args.vars),
+                                         json.loads(args.exclude))
         return json.dumps(result)
 
     def POST(self):
