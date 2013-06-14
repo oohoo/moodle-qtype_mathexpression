@@ -118,17 +118,22 @@ class qtype_mathexpression extends question_type {
         $options = $DB->get_record('qtype_mathexpression_options',array('questionid' => $questiondata->id));
         $question->buttonlist = $options->buttonlist;
         $question->comparetype = $options->comparetype;
+        $question->correctanswer_mathml = $options->answer_mathml;
 
         $excluded = $DB->get_records('qtype_mathexpression_exclude', array('questionid' => $questiondata->id));
         $question->exclude = array();
+        $question->exclude_mathml = array();
         foreach($excluded as $excl) {
             $question->exclude[] = $excl->answer;
+            $question->exclude_mathml[] = $excl->answer_mathml;
         }
 
         $variables = $DB->get_records('qtype_mathexpression_vars', array('questionid' => $questiondata->id));
         $question->variable = array();
+        $question->variable_mathml = array();
         foreach($variables as $var) {
             $question->variable[] = $var->variable;
+            $question->variable_mathml[] = $var->variable_mathml;
         }
     }
 }

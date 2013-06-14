@@ -12,8 +12,7 @@
 # * *************************************************************************
 # * ************************************************************************ */
 
-import algebra
-import mathml
+import mathml as mathmlconv
 import os
 import web
 
@@ -33,7 +32,7 @@ def prep_variables(vars):
     """
     variables = []
     for variable in vars:
-        variable = mathml.mathmlToSage(variable)
+        variables.append(mathmlconv.mathmlToSage(variable))
     return variables
 
 
@@ -51,12 +50,12 @@ def replace_variables(expr, variables):
     placeholders = ['a', 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n',
                     'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     for x in range(0, len(variables)):
-        expr = expr.replace(var, '(' + placeholders[x] + ')')
+        expr = expr.replace(variables[x], '(' + placeholders[x] + ')')
     return expr
 
 
 def prep_expression(expr, variables):
-    expr = mathml.latexToMathml(expr)
+    expr = mathmlconv.mathmlToSage(expr)
     expr = replace_variables(expr, variables)
     expr = preparse(expr)
     expr = expr.replace('Integer', '')
@@ -96,10 +95,11 @@ def simple_compare(answer, response, vars=[]):
     # Simply check to see if the representation of the expression is
     # a string containing the single character '0'.
     result = {
-        'answer': answer,
-        'response': response,
+        'answer': str(answer),
+        'response': str(response),
         'result': (f.__repr__() == '0')
     }
+    web.debug(str(result))
     return result
 
 
@@ -127,10 +127,12 @@ def full_compare(answer, response, vars=[], exclude=[]):
         @rtype: bool
         @return: true if the expressions are equal, false otherwise
     """
-    web.debug("Full compare of '%s' to '%s' with variables '%s' excluding '%s'" %
-             (answer, response, ','.join(vars), ';'.join(exclude)))
+    web.debug("Full compare of %s to %s with variables %s excluding %s" %
+             (answer, response, str(vars), str(exclude)))
+    sage.misc.preparser.implicit_multiplication(10)  # Configure Sage
 
     variables = prep_variables(vars)
+
     answer = prep_expression(answer, variables)
     response = prep_expression(response, variables)
 
@@ -145,18 +147,22 @@ def full_compare(answer, response, vars=[], exclude=[]):
         # matches with a simple comparison and so should be exlcuded.
         if diff.__repr__() == '0':
             # Response is excluded so immediately return false
-            return {
-                'expr1': answer,
-                'expr2': response,
+            result = {
+                'answer': str(answer),
+                'response': str(response),
                 'result': False
             }
+            web.debug(str(result))
+            return result
+
     # Create an expression that is the difference of the answer and response
-    f = (answer_expr)-(response_expr)
+    f = answer-response
     # Simply use the 'is_zero' method to determine if the expressions are
     # equal. There is no need to perform 'simplify_full'.
     result = {
-        'expr1': answer,
-        'expr2': response,
+        'answer': str(answer),
+        'response': str(response),
         'result': f.is_zero()
     }
+    web.debug(str(result))
     return result

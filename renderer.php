@@ -47,8 +47,10 @@ class qtype_mathexpression_renderer extends qtype_renderer {
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
         $question = $qa->get_question();
+
         $currentanswer = $qa->get_last_qt_var('answer');
         $inputname = $qa->get_qt_field_name('answer');
+        $inputname_mathml = $qa->get_qt_field_name('answer_mathml');
 
         $result = html_writer::tag('div', $question->format_questiontext($qa), array('class' => 'qtext'));
 
@@ -63,15 +65,24 @@ class qtype_mathexpression_renderer extends qtype_renderer {
                 'value' => $currentanswer
             );
             $result .= html_writer::empty_tag('input', $inputattributes);
+
+            $mathmlattributes = array(
+                'type' => 'hidden',
+                'name' => $inputname_mathml
+            );
+            $result .= html_writer::empty_tag('input', $mathmlattributes);
+
             $buttonlistattributes = array(
                 'type' => 'hidden',
                 'id' => 'id_buttonlist',
                 'value' => $question->buttonlist
             );
             $result .= html_writer::empty_tag('input', $buttonlistattributes);
+
             $result .= html_writer::tag('div', '', array('class' => 'question-matheditor',
                 'data-matheditor' => 'input[name="'.$inputname.'"]',
-                'data-matheditorvars' => json_encode($question->variable)));
+                'data-matheditorvars' => json_encode($question->variable),
+                'data-matheditor-mathml' => 'input[name="'.$inputname_mathml.'"]'));
         }
 
         return $result;

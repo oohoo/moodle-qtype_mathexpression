@@ -35,7 +35,7 @@ class qtype_mathexpression_question extends question_graded_automatically {
      * @return array storing (variable name) => (variable type)
      */
     public function get_expected_data() {
-        return array('answer' => PARAM_RAW);
+        return array('answer' => PARAM_RAW, 'answer_mathml' => PARAM_RAW);
     }
 
     /**
@@ -122,8 +122,8 @@ class qtype_mathexpression_question extends question_graded_automatically {
     public function grade_response(array $response) {
         global $CFG;
 
-        $fields = array('expr1' => $this->correctanswer,
-                'expr2' => $response['answer'], 'vars' => json_encode($this->variable));
+        $fields = array('answer' => $this->correctanswer_mathml,
+                'response' => $response['answer_mathml'], 'vars' => json_encode($this->variable_mathml));
 
         $url = $CFG->qtype_mathexpression_sageserver;
         if($url == '') {
@@ -132,7 +132,7 @@ class qtype_mathexpression_question extends question_graded_automatically {
 
         if($this->comparetype == 'full') {
             $url .= '/full';
-            $fields['exclude'] = json_encode($this->exclude);
+            $fields['exclude'] = json_encode($this->exclude_mathml);
         } else if($this->comparetype == 'simple') {
             $url .= '/simple';
         } else {

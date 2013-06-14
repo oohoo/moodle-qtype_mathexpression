@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 
 
 def mathmlToSage(mathml):
-    root = ET.XML(mathml)
+    root = ET.fromstring(mathml.encode('utf-8'))
     if not 'math' in root.tag:
         raise "MathML must begin with <math> tag"
     return parse_element(root)
