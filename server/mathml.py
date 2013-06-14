@@ -61,3 +61,19 @@ def parse_msqrt(msqrt):
         result = result + parse_element(child)
     result = result + ')'
     return result
+
+
+def parse_mtable(mtable):
+    result = 'matrix('
+    rows = []
+    for mtr in mtable:
+        row_str = '['
+        cols = []
+        for mtd in mtr:
+            cols.append(parse_element(mtd))
+        row_str = row_str + ','.join(cols)
+        row_str = row_str + ']'
+        rows.append(row_str)
+    result = result + ','.join(rows)
+    result = result + ')'
+    return result

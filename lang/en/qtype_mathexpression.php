@@ -43,6 +43,7 @@ $string['greeklower'] = 'Greek Lower Case';
 $string['greekupper'] = 'Greek Upper Case';
 $string['infinity'] = 'Infinity';
 $string['logs/exponential'] = 'Logarithms/Exponential';
+$string['matrix'] = 'Matrix';
 $string['mustprovideanswer'] = 'Must provide an answer';
 $string['operators'] = 'Operators';
 $string['pluginname'] = 'Math Expression';

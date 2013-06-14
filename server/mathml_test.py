@@ -31,6 +31,30 @@ class TestMathML(unittest.TestCase):
         result = mathml.mathmlToSage(test)
         self.assertEqual(result, '(-(b)+sqrt((((b))^((2)))-(4)(a)(c)))/((2)(a))')
 
+    def test_convert_mtable_row(self):
+        test = '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>(</mo>'
+        test = test + '<mtable rowspacing="4pt" columnspacing="1em"><mtr><mtd><mn>1</mn></mtd>'
+        test = test + '<mtd><mn>2</mn></mtd><mtd><mn>3</mn></mtd></mtr></mtable><mo>)</mo>'
+        test = test + '</mrow></math>'
+        result = mathml.mathmlToSage(test)
+        self.assertEqual(result, '(matrix([(1),(2),(3)]))')
+
+    def test_convert_mtable_col(self):
+        test = '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>(</mo>'
+        test = test + '<mtable rowspacing="4pt" columnspacing="1em"><mtr><mtd><mn>1</mn></mtd>'
+        test = test + '</mtr><mtr><mtd><mn>2</mn></mtd></mtr><mtr><mtd><mn>3</mn></mtd></mtr>'
+        test = test + '</mtable><mo>)</mo></mrow></math>'
+        result = mathml.mathmlToSage(test)
+        self.assertEqual(result, '(matrix([(1)],[(2)],[(3)]))')
+
+    def test_convert_mtable(self):
+        test = '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>(</mo>'
+        test = test + '<mtable rowspacing="4pt" columnspacing="1em"><mtr><mtd><mn>1</mn></mtd>'
+        test = test + '<mtd><mn>2</mn></mtd></mtr><mtr><mtd><mn>3</mn></mtd><mtd><mn>4</mn></mtd>'
+        test = test + '</mtr></mtable><mo>)</mo></mrow></math>'
+        result = mathml.mathmlToSage(test)
+        self.assertEqual(result, '(matrix([(1),(2)],[(3),(4)]))')
+
 
 if __name__ == '__main__':
     unittest.main()
