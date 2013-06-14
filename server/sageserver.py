@@ -30,13 +30,17 @@ def prep_variables(vars):
         @rtype: list
         @return: the list of variables in Sage format
     """
+    placeholders = ['a', 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n',
+                    'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     variables = []
-    for variable in vars:
-        variables.append(mathmlconv.mathmlToSage(variable))
-    return variables
+    used_vars = []
+    for x in range(0, len(vars)):
+        variables.append(mathmlconv.mathmlToSage(vars[x]))
+        used_vars.append((placeholders[x], var(placeholders[x])))
+    return variables, used_vars
 
 
-def replace_variables(expr, variables):
+def replace_variables(expr, variables, placeholders):
     """ Replaces the variables defined in the variables list by simple
         placeholders. This allows complex variables (such as theta_{12}) to be
         replaced by simpler terms that are better understood by Sage.
@@ -47,24 +51,27 @@ def replace_variables(expr, variables):
         @rtype: string
         @return: the expression with the replaced variables
     """
-    placeholders = ['a', 'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n',
-                    'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+    web.debug(placeholders)
     for x in range(0, len(variables)):
-        expr = expr.replace(variables[x], '(' + placeholders[x] + ')')
+        expr = expr.replace(variables[x], '(' + placeholders[x][0] + ')')
     return expr
 
 
-def prep_expression(expr, variables):
+def prep_expression(expr, variables, placeholders):
     expr = mathmlconv.mathmlToSage(expr)
-    expr = replace_variables(expr, variables)
-    expr = preparse(expr)
-    expr = expr.replace('Integer', '')
-    expr = expr.replace('RealNumber', '')
+    expr = replace_variables(expr, variables, placeholders)
+    #expr = preparse(expr)
+    #expr = expr.replace('Integer', '')
+    #expr = expr.replace('RealNumber', '')
+    web.debug(expr)
+    vars = {}
+    for var in placeholders:
+        vars[var[0]] = var[1]
     try:
-        expr = symbolic_expression_from_string(expr)
+        expr = sage_eval(expr, vars)
     except SyntaxError, e:
         web.debug("Error parsing : %s" % e)
-        return symbolic_expression_from_string('')
+        return sage_eval('')
     return expr
 
 
@@ -87,11 +94,11 @@ def simple_compare(answer, response, vars=[]):
              (answer, response, vars))
     sage.misc.preparser.implicit_multiplication(10)  # Configure Sage
 
-    variables = prep_variables(vars)
-    answer = prep_expression(answer, variables)
-    response = prep_expression(response, variables)
+    variables, placeholders = prep_variables(vars)
+    answer = prep_expression(answer, variables, placeholders)
+    response = prep_expression(response, variables, placeholders)
 
-    f = symbolic_expression_from_string("(%s)-(%s)" % (answer, response))
+    f = answer-response
     # Simply check to see if the representation of the expression is
     # a string containing the single character '0'.
     result = {
@@ -131,15 +138,15 @@ def full_compare(answer, response, vars=[], exclude=[]):
              (answer, response, str(vars), str(exclude)))
     sage.misc.preparser.implicit_multiplication(10)  # Configure Sage
 
-    variables = prep_variables(vars)
+    variables, placeholders = prep_variables(vars)
 
-    answer = prep_expression(answer, variables)
-    response = prep_expression(response, variables)
+    answer = prep_expression(answer, variables, placeholders)
+    response = prep_expression(response, variables, placeholders)
 
     # First check for exlcuded responses
     for exc in exclude:
         # Create and expression from the excluded string
-        exc = prep_expression(exc, variables)
+        exc = prep_expression(exc, variables, placeholders)
         # Take a difference between the excluded expression and the
         # response provided by the student
         diff = response-exc

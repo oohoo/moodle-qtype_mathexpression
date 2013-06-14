@@ -21,6 +21,6 @@ $plugin->release = '1.0.0 (Build: 2013052200)';
 $plugin->component = 'qtype_mathexpression';
 $plugin->cron = 0;
 $plugin->dependencies = array(
-    'tinymce_matheditor' => 2013060300,
-    'filter_mathjax' => 2013052100
+    'tinymce_matheditor' => 2013061400,
+    'filter_mathjax' => 2013061400
 );

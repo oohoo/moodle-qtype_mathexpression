@@ -64,7 +64,7 @@ def parse_msqrt(msqrt):
 
 
 def parse_mtable(mtable):
-    result = 'matrix('
+    result = 'matrix(['
     rows = []
     for mtr in mtable:
         row_str = '['
@@ -75,5 +75,5 @@ def parse_mtable(mtable):
         row_str = row_str + ']'
         rows.append(row_str)
     result = result + ','.join(rows)
-    result = result + ')'
+    result = result + '])'
     return result
