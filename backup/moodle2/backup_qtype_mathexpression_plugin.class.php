@@ -35,7 +35,7 @@ class backup_qtype_mathexpression_plugin extends backup_qtype_plugin {
 
         // Now create the qtype own structures.
         $options = new backup_nested_element('options', array('id'), array(
-                'buttonlist', 'comparetype'));
+                'buttonlist', 'comparetype', 'answer_mathml'));
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($options);
@@ -49,10 +49,20 @@ class backup_qtype_mathexpression_plugin extends backup_qtype_plugin {
         $pluginwrapper->add_child($excludes);
 
         $exclude = new backup_nested_element('exclude', array('id'), array(
-                'answer'));
+                'answer', 'answer_mathml'));
         $excludes->add_child($exclude);
 
         $exclude->set_source_table('qtype_mathexpression_exclude', array('questionid' => backup::VAR_PARENTID));
+
+        // Variables
+        $variables = new backup_nested_element('vars');
+        $pluginwrapper->add_child($variables);
+
+        $var = new backup_nested_element('var', array('id'), array(
+                'variable', 'variable_mathml'));
+        $variables->add_child($var);
+
+        $var->set_source_table('qtype_mathexpression_vars', array('questionid' => backup::VAR_PARENTID));
 
         return $plugin;
     }
