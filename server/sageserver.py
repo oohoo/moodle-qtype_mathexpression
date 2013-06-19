@@ -63,11 +63,13 @@ def prep_expression(expr, variables, placeholders):
     #expr = preparse(expr)
     #expr = expr.replace('Integer', '')
     #expr = expr.replace('RealNumber', '')
+    expr = expr.replace(u'\u2212', '-')  # Replace fancy minus by regular one
     web.debug(expr)
     vars = {}
     for var in placeholders:
         vars[var[0]] = var[1]
     try:
+        web.debug(expr)
         expr = sage_eval(expr, vars)
     except SyntaxError, e:
         web.debug("Error parsing : %s" % e)
