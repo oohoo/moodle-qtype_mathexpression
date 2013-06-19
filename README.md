@@ -60,8 +60,8 @@ deemed equivalent.<br/>
 
 ```javascript
 {
-  'expr1': 'algebraic notation for expression 1'
-  'expr2': 'algebraic notation for expression 2'
+  'answer': 'algebraic notation for expression 1'
+  'response': 'algebraic notation for expression 2'
   'result': true or false
 }
 ```
@@ -81,8 +81,8 @@ from simply echoing the initial equation in the case a simplification is request
 
 ```javascript
 {
-  'expr1': 'algebraic notation for expression 1'
-  'expr2': 'algebraic notation for expression 2'
+  'answer': 'algebraic notation for expression 1'
+  'response': 'algebraic notation for expression 2'
   'result': true or false
 }
 ```
