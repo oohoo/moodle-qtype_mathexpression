@@ -65,5 +65,7 @@ function xmldb_qtype_mathexpression_upgrade($oldversion) {
         // Mathexpression savepoint reached.
         upgrade_plugin_savepoint(true, 2013061300, 'qtype', 'mathexpression');
     }
+
+    return true;
 }
 
