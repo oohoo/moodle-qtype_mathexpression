@@ -74,7 +74,7 @@ class qtype_mathexpression_renderer extends qtype_renderer {
 
             $buttonlistattributes = array(
                 'type' => 'hidden',
-                'id' => 'id_buttonlist',
+                'name' => 'buttonlist_'.$inputname,
                 'value' => $question->buttonlist
             );
             $result .= html_writer::empty_tag('input', $buttonlistattributes);
@@ -82,7 +82,8 @@ class qtype_mathexpression_renderer extends qtype_renderer {
             $result .= html_writer::tag('div', '', array('class' => 'question-matheditor',
                 'data-matheditor' => 'input[name="'.$inputname.'"]',
                 'data-matheditorvars' => json_encode($question->variable),
-                'data-matheditor-mathml' => 'input[name="'.$inputname_mathml.'"]'));
+                'data-matheditor-mathml' => 'input[name="'.$inputname_mathml.'"]',
+                'data-matheditor-buttons' => 'input[name="buttonlist_'.$inputname.'"]'));
         }
 
         return $result;

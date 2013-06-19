@@ -71,7 +71,7 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             .','.self::$log_buttons.','.self::$infinity_buttons.','.self::$matrix_buttons);
 
         $mform->addElement('static', 'matheditor', get_string('answer', 'qtype_mathexpression'),
-           $this->math_editor('question-matheditor', '.answer-matheditor', '.answer-mathml-matheditor'));
+           $this->math_editor('question-matheditor', '.answer-matheditor', '.answer-mathml-matheditor', '#id_buttonlist'));
 
         $mform->addElement('hidden', 'answer', '', array('class' => 'answer-matheditor'));
         $mform->setType('answer', PARAM_RAW);
@@ -219,9 +219,10 @@ class qtype_mathexpression_edit_form extends question_edit_form {
      * @param identifier the hidden input field identifier
      * @return string html
      */
-    private function math_editor($class, $identifier, $identifier_mathml='') {
+    private function math_editor($class, $identifier, $identifier_mathml='', $identifier_buttonlist='') {
         $result = '<div class="'.$class.'" data-matheditor="'.$identifier.'" ';
-        $result .= 'data-matheditor-mathml="'.$identifier_mathml.'">';
+        $result .= 'data-matheditor-mathml="'.$identifier_mathml.'" ';
+        $result .= 'data-matheditor-buttons="'.$identifier_buttonlist.'">';
         $result .= '</div>';
         return $result;
     }

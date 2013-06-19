@@ -29,30 +29,14 @@
             }
         };
 
-        var buttonListElement = $('#id_buttonlist');
+        /* QUESTION ANSWER FIELDS - Student View */
 
-        var updateButtonList = function() {
-            buttonListElement.val('');
-            $('input[name="mathbuttongroups"]').each(function() {
-                if($(this).is(':checked')) {
-                    buttonListElement.val(buttonListElement.val() + ',' + $(this).data('math'));
-                }
-            });
-            buttonListElement.trigger('propertychange');
-        };
-
-        // Checkbox default values
-        $('input[name="mathbuttongroups"]').each(function() {
-            if(buttonListElement.val().indexOf($(this).data('math')) !== -1) {
-                $(this).attr('checked', true);
-            }
-            $(this).click(updateButtonList);
-        });
-
-        // Bind the question fields with the Math Editor
         $('.question-matheditor').each(function(index) {
             var editor = new MathEditor(this, langHandler);
             editor.setVariables($(this).data('matheditorvars'));
+
+            // BUTTONS
+            var buttonListElement = $($(this).data('matheditor-buttons'));
 
             // Retrieve the button list from the form element (if it exists)
             if(buttonListElement.length > 0) {
@@ -62,6 +46,7 @@
                 });
             }
 
+            // HIDDEN LATEX AND MATHML FIELDS
             // Attach a callback to the onchange event of the editor and update a hidden field
             // within the form
             var inputField = $($(this).data('matheditor'));
@@ -89,6 +74,8 @@
             // Retrieve any existing data from this field and render it within the editor
             editor.setLatex(inputField.val());
         });
+
+        /* EXCLUDE FIELDS */
 
         // Bind the exclude fields with the Math Editor
         $('.exclude-matheditor').each(function(index) {
@@ -169,6 +156,25 @@
 
             // Retrieve any existing data from this field and render it within the editor
             editor.setLatex(inputField.val());
+        });
+
+        var buttonListElement = $('#id_buttonlist');
+        var updateButtonList = function() {
+            buttonListElement.val('');
+            $('input[name="mathbuttongroups"]').each(function() {
+                if($(this).is(':checked')) {
+                    buttonListElement.val(buttonListElement.val() + ',' + $(this).data('math'));
+                }
+            });
+            buttonListElement.trigger('propertychange');
+        };
+
+        // Checkbox default values
+        $('input[name="mathbuttongroups"]').each(function() {
+            if(buttonListElement.val().indexOf($(this).data('math')) !== -1) {
+                $(this).attr('checked', true);
+            }
+            $(this).click(updateButtonList);
         });
 
         // Only show the exclude fields when the compare type is full
