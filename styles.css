@@ -19,3 +19,32 @@
 .mform fieldset .matheditor-equation {
     margin-top: 10px;
 }
+
+/* Editor form */
+
+body #id_answerheader .fcontainer .fitem_fselect {
+    margin-top: 0;
+    border-top: 0;
+    margin-bottom: 0;
+}
+
+body #id_answerheader .fcontainer .fitem_feditor {
+    margin-top: 0;
+    border-top: 0;
+    border-bottom: 1px solid #BBB;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+body #id_answerheader .fcontainer .fitem_fsubmit {
+    background: none;
+    border: 0;
+}
+
+body #id_answerheader .fitem {
+    background: #EEE;
+    border: 1px solid #BBB;
+    border-bottom: 0;
+    padding-top: 10px;
+    margin-bottom: 0;
+}

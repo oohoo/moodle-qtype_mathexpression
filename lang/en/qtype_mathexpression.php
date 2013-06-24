@@ -14,9 +14,11 @@
  * *************************************************************************
  * ************************************************************************ */
 
+$string['addanswer'] = 'Add Answer';
 $string['addexcludedexpression'] = 'Add Excluded Expression';
 $string['addvariable'] = 'Add Variable';
 $string['answer'] = 'Answer';
+$string['answers'] = 'Answers';
 $string['buttongroups'] = 'Button Groups';
 $string['buttonlist'] = 'Button List';
 $string['buttonlist_help'] = 'This list specifies the buttons that will appear within the response'
@@ -30,6 +32,7 @@ $string['comparetype_help'] = 'How the student\'s response is evaluated. Current
     .'not.</li><li><b>Full:</b> Performs a full symbolic comparison between two expressions. '
     .'This will involve fully simplifying each and then comparing to see if the result is the '
     .'same.</li></ul>';
+$string['configuration'] = 'Configuration';
 $string['correctanswer'] = 'Correct Answer';
 $string['exclude'] = 'Exclude';
 $string['exclude_help'] = 'An optional list of excluded expressions can be defined. If the '

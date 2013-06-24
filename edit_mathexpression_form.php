@@ -35,6 +35,8 @@ class qtype_mathexpression_edit_form extends question_edit_form {
      */
     protected function definition_inner($mform) {
         global $PAGE, $DB;
+
+        // All the external requirements
         $PAGE->requires->jquery();
         $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/js/mathquill.min.js'));
         $PAGE->requires->css(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/css/mathquill.css'));
@@ -44,8 +46,10 @@ class qtype_mathexpression_edit_form extends question_edit_form {
         $PAGE->requires->js(new moodle_url('/question/type/mathexpression/mathexpression.js'));
         $PAGE->requires->css(new moodle_url('/question/type/mathexpression/styles.css'));
 
-        $mform->addElement('header', 'answerheader', get_string('answer', 'qtype_mathexpression'), true);
-        $mform->setExpanded('answerheader', 1);
+        // Configuration form
+
+        $mform->addElement('header', 'configheader', get_string('configuration', 'qtype_mathexpression'), true);
+        $mform->setExpanded('configheader', 1);
 
         $mform->addElement('checkbox', 'mathbuttongroups', get_string('buttongroups', 'qtype_mathexpression'),
             get_string('operators', 'qtype_mathexpression'), array('data-math' => self::$operator_buttons));
@@ -70,15 +74,6 @@ class qtype_mathexpression_edit_form extends question_edit_form {
         $mform->setDefault('buttonlist', self::$operator_buttons.','.self::$superscript_buttons.','.self::$trigonometry_buttons
             .','.self::$log_buttons.','.self::$infinity_buttons.','.self::$matrix_buttons);
 
-        $mform->addElement('static', 'matheditor', get_string('answer', 'qtype_mathexpression'),
-           $this->math_editor('question-matheditor', '.answer-matheditor', '.answer-mathml-matheditor', '#id_buttonlist'));
-
-        $mform->addElement('hidden', 'answer', '', array('class' => 'answer-matheditor'));
-        $mform->setType('answer', PARAM_RAW);
-
-        $mform->addElement('hidden', 'answer_mathml', '', array('class' => 'answer-mathml-matheditor'));
-        $mform->setType('answer_mathml', PARAM_RAW);
-
         $comparetypes = array('simple' => get_string('simple', 'qtype_mathexpression'),
             'full' => get_string('full', 'qtype_mathexpression'));
 
@@ -87,7 +82,36 @@ class qtype_mathexpression_edit_form extends question_edit_form {
         $select->setSelected('full');
         $mform->addHelpButton('comparetype', 'comparetype', 'qtype_mathexpression');
 
+        // Answers
+
+        $mform->addElement('header', 'answerheader', get_string('answers', 'qtype_mathexpression'), true);
+        $mform->setExpanded('answerheader', 1);
+
+        $repeated_answers = array();
+        $repeated_answers[] = $mform->createElement('static', 'matheditor', get_string('answer', 'qtype_mathexpression'),
+           $this->math_editor('answer-matheditor', '#id_buttonlist'));
+
+        $repeated_answers[] = $mform->createElement('hidden', 'answer', '');
+        $mform->setType('answer', PARAM_RAW);
+
+        $repeated_answers[] = $mform->createElement('hidden', 'answer_mathml', '');
+        $mform->setType('answer_mathml', PARAM_RAW);
+
+        $repeated_answers[] = $mform->createElement('select', 'fraction', get_string('grade'), question_bank::fraction_options());
+
+        $repeated_answers[] = $mform->createElement('editor', 'feedback', get_string('feedback', 'question'), array('rows' => 5),
+            $this->editoroptions);
+
+        $number_answers = 1;
+        if(isset($this->question->id)) {
+            $number_answers = $DB->count_records('question_answers', array('question' => $this->question->id));
+        }
+
+        $this->repeat_elements($repeated_answers, $number_answers, array(), 'answer_number', 'add_answer', 1,
+            get_string('addanswer', 'qtype_mathexpression'), true);
+
         // Variables
+
         $mform->addElement('header', 'variablesheader',
             get_string('variables', 'qtype_mathexpression'), true);
         $mform->setExpanded('variablesheader', 1);
@@ -97,7 +121,7 @@ class qtype_mathexpression_edit_form extends question_edit_form {
         $repeated_vars = array();
         $repeated_vars[] = $mform->createElement('static', 'matheditor',
             get_string('variable', 'qtype_mathexpression'),
-            $this->math_editor('variable-matheditor', ''));
+            $this->math_editor('variable-matheditor'));
         $repeated_vars[] = $mform->createElement('hidden', 'variable', '');
         $repeated_vars[] = $mform->createElement('hidden', 'variable_mathml', '');
         $mform->setType('variable', PARAM_RAW);
@@ -112,6 +136,7 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             get_string('addvariable', 'qtype_mathexpression'), true);
 
         // Excludes
+
         $mform->addElement('header', 'excludedheader',
             get_string('excludedexpressions', 'qtype_mathexpression'), true);
         $mform->setExpanded('excludedheader', 1);
@@ -121,7 +146,7 @@ class qtype_mathexpression_edit_form extends question_edit_form {
         $repeated = array();
         $repeated[] = $mform->createElement('static', 'matheditor',
             get_string('exclude', 'qtype_mathexpression'),
-            $this->math_editor('exclude-matheditor', ''));
+            $this->math_editor('exclude-matheditor'));
         $repeated[] = $mform->createElement('hidden', 'exclude', '');
         $repeated[] = $mform->createElement('hidden', 'exclude_mathml', '');
         $mform->setType('exclude', PARAM_RAW);
@@ -149,11 +174,6 @@ class qtype_mathexpression_edit_form extends question_edit_form {
 
         $question = $this->data_preprocessing_answers($question);
         
-        if (isset($question->options)) {
-            $answer = array_shift($question->options->answers);
-            $question->answer = $answer->answer;
-        }
-
         if (isset($question->id)) {
             $options = $DB->get_record('qtype_mathexpression_options',array('questionid' => $question->id));
             $question->buttonlist = $options->buttonlist;
@@ -178,6 +198,8 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             }
             $question->variable_number = count($variables);
         }
+
+        print_object($question);
 
         return $question;
     }
@@ -216,13 +238,15 @@ class qtype_mathexpression_edit_form extends question_edit_form {
      * Generates the HTML markup for the matheditor form element.
      *
      * @param class the class value for the element
-     * @param identifier the hidden input field identifier
+     * @param identifier_buttonlist the list of buttons
      * @return string html
      */
-    private function math_editor($class, $identifier, $identifier_mathml='', $identifier_buttonlist='') {
-        $result = '<div class="'.$class.'" data-matheditor="'.$identifier.'" ';
-        $result .= 'data-matheditor-mathml="'.$identifier_mathml.'" ';
-        $result .= 'data-matheditor-buttons="'.$identifier_buttonlist.'">';
+    private function math_editor($class, $identifier_buttonlist=null) {
+        $result = '<div class="'.$class.'"';
+        if($identifier_buttonlist) {
+            $result .= ' data-matheditor-buttons="'.$identifier_buttonlist.'"';
+        }
+        $result .= '>';
         $result .= '</div>';
         return $result;
     }

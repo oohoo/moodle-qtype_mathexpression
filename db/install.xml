@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/mathexpression/db" VERSION="20130613" COMMENT="XMLDB file for Moodle question/type/mathexpression"
+<XMLDB PATH="question/type/mathexpression/db" VERSION="20130624" COMMENT="XMLDB file for Moodle question/type/mathexpression"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -10,7 +10,6 @@
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="buttonlist" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="A list of the buttons to show in the student's answer editor"/>
         <FIELD NAME="comparetype" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="simple" SEQUENCE="false" COMMENT="The type of comparison to do on the student response, basically what method is used for grading"/>
-        <FIELD NAME="answer_mathml" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -38,6 +37,17 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="qtype_mathexpression_answers" COMMENT="Answers table">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="question_answer_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="mathml" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="the mathml equivalent of the answer"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="question_answer_id" TYPE="foreign" FIELDS="question_answer_id" REFTABLE="question_answers" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>
