@@ -18,6 +18,7 @@ $string['addanswer'] = 'Add Answer';
 $string['addexcludedexpression'] = 'Add Excluded Expression';
 $string['addvariable'] = 'Add Variable';
 $string['answer'] = 'Answer';
+$string['answermustbegiven'] = 'Answer must be given';
 $string['answers'] = 'Answers';
 $string['buttongroups'] = 'Button Groups';
 $string['buttonlist'] = 'Button List';

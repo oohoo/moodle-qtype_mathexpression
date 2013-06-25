@@ -122,8 +122,8 @@ class qtype_mathexpression_question extends question_graded_automatically {
     public function grade_response(array $response) {
         global $CFG;
 
-        $fields = array('answer' => $this->correctanswer_mathml,
-                'response' => $response['answer_mathml'], 'vars' => json_encode($this->variable_mathml));
+        $fields = array('response' => $response['answer_mathml'],
+            'vars' => json_encode($this->variable_mathml));
 
         $url = $CFG->qtype_mathexpression_sageserver;
         if($url == '') {
@@ -139,20 +139,25 @@ class qtype_mathexpression_question extends question_graded_automatically {
             throw new moodle_exception('Invalid Math Expression compare type');
         }
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($fields));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $fraction = 0;
+        foreach($this->answers as $answer) {
+            $fields['answer'] = $answer->mathml;
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($fields));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $server_response = curl_exec($ch);
-        curl_close($ch);
-        $sage_result = json_decode($server_response);
-
-        if($sage_result->result) {
-            $fraction = 1.0;
-        } else {
-            $fraction = 0;
+            $server_response = curl_exec($ch);
+            curl_close($ch);
+            try {
+                $sage_result = json_decode($server_response);
+                if($sage_result->result) {
+                    $fraction = $answer->fraction;
+                }
+            } catch(Exception $e) {
+                // Do nothing, fraction is already 0
+            }
         }
 
         // Utilize the user defined state for the given fraction value, see the question_state

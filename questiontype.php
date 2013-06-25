@@ -30,36 +30,46 @@ class qtype_mathexpression extends question_type {
 
         $result = new stdClass();
 
-        // Remove old answer
-        $oldanswers = $DB->delete_records('question_answers', array('question' => $question->id));
+        // Remove old answers (the mathml equivalents)
+        $answers = $DB->get_records('question_answers', array('question' => $question->id));
+        foreach($answers as $answer) {
+            $DB->delete_records('qtype_mathexpression_answers',
+                array('question_answer_id' => $answer->id));
+        }
+
+        // Remove old answers
+        $DB->delete_records('question_answers', array('question' => $question->id));
 
         // Remove old options
-        $oldanswers = $DB->delete_records('qtype_mathexpression_options',
-            array('questionid' => $question->id));
+        $DB->delete_records('qtype_mathexpression_options', array('questionid' => $question->id));
 
         // Remove old excluded answers
-        $oldanswers = $DB->delete_records('qtype_mathexpression_exclude',
-            array('questionid' => $question->id));
+        $DB->delete_records('qtype_mathexpression_exclude', array('questionid' => $question->id));
 
         // Remove old variables
-        $oldanswers = $DB->delete_records('qtype_mathexpression_vars',
-            array('questionid' => $question->id));
+        $DB->delete_records('qtype_mathexpression_vars', array('questionid' => $question->id));
 
-        // Insert new answer
-        $answer = new stdClass();
-        $answer->question = $question->id;
-        $answer->answer = $question->answer;
-        $answer->fraction = 1;
-        $answer->feedback = '';
-        $answer->feedbackformat = 0;
-        $answer->id = $DB->insert_record('question_answers', $answer);
+        // Insert new answers
+        for($i = 0; $i < count($question->answer); $i++) {
+            $answer = new stdClass();
+            $answer->question = $question->id;
+            $answer->answer = $question->answer[$i];
+            $answer->fraction = $question->fraction[$i];
+            $answer->feedback = $question->feedback[$i]['text'];
+            $answer->feedbackformat = $question->feedback[$i]['format'];
+            $answer->id = $DB->insert_record('question_answers', $answer);
+
+            $answer_mathml = new stdClass();
+            $answer_mathml->question_answer_id = $answer->id;
+            $answer_mathml->mathml = $question->answer_mathml[$i];
+            $DB->insert_record('qtype_mathexpression_answers', $answer_mathml);
+        }
 
         // Insert new options
         $options = new stdClass();
         $options->questionid = $question->id;
         $options->buttonlist = $question->buttonlist;
         $options->comparetype = $question->comparetype;
-        $options->answer_mathml = $question->answer_mathml;
         $options->id = $DB->insert_record('qtype_mathexpression_options', $options);
 
         // Insert excluded expressions (if applicable)
@@ -112,13 +122,19 @@ class qtype_mathexpression extends question_type {
         global $DB;
         parent::initialise_question_instance($question, $questiondata);
 
-        $answer = array_shift($questiondata->options->answers);
-        $question->correctanswer = $answer->answer;
+        foreach($questiondata->options->answers as $answer) {
+            if($answer->fraction == 1) {
+                $question->correctanswer = $answer->answer;
+            }
+            $answer_mathml = $DB->get_record('qtype_mathexpression_answers',
+                array('question_answer_id' => $answer->id));
+            $answer->mathml = $answer_mathml->mathml;
+        }
+        $question->answers = $questiondata->options->answers;
 
         $options = $DB->get_record('qtype_mathexpression_options',array('questionid' => $questiondata->id));
         $question->buttonlist = $options->buttonlist;
         $question->comparetype = $options->comparetype;
-        $question->correctanswer_mathml = $options->answer_mathml;
 
         $excluded = $DB->get_records('qtype_mathexpression_exclude', array('questionid' => $questiondata->id));
         $question->exclude = array();

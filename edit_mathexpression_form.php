@@ -159,6 +159,8 @@ class qtype_mathexpression_edit_form extends question_edit_form {
 
         $this->repeat_elements($repeated, $number, array(), 'exclude_number', 'add_exclude', 1,
             get_string('addexcludedexpression', 'qtype_mathexpression'), true);
+
+        $this->add_interactive_settings();
     }
 
     /**
@@ -178,7 +180,6 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             $options = $DB->get_record('qtype_mathexpression_options',array('questionid' => $question->id));
             $question->buttonlist = $options->buttonlist;
             $question->comparetype = $options->comparetype;
-            $question->answer_mathml = $options->answer_mathml;
 
             $excluded = $DB->get_records('qtype_mathexpression_exclude', array('questionid' => $question->id));
             $question->exclude = array();
@@ -199,8 +200,6 @@ class qtype_mathexpression_edit_form extends question_edit_form {
             $question->variable_number = count($variables);
         }
 
-        print_object($question);
-
         return $question;
     }
 
@@ -215,12 +214,28 @@ class qtype_mathexpression_edit_form extends question_edit_form {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        $answer = $data['answer'];
-
-        if ($answer == '') {
-            $errors['matheditor'] = get_string('mustprovideanswer', 'qtype_mathexpression', 1);
+        $answers = $data['answer'];
+        $answercount = 0;
+        $maxgrade = false;
+        foreach ($answers as $key => $answer) {
+            $trimmedanswer = trim($answer);
+            if ($trimmedanswer !== '') {
+                $answercount++;
+                if ($data['fraction'][$key] == 1) {
+                    $maxgrade = true;
+                }
+            } else if ($data['fraction'][$key] != 0 ||
+                    !html_is_blank($data['feedback'][$key]['text'])) {
+                $errors["fraction[$key]"] = get_string('answermustbegiven', 'qtype_mathexpression');
+                $answercount++;
+            }
         }
-
+        if ($answercount==0) {
+            $errors['fraction[0]'] = get_string('notenoughanswers', 'qtype_mathexpression', 1);
+        }
+        if ($maxgrade == false) {
+            $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
+        }
         return $errors;
     }
 
