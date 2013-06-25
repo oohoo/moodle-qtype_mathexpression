@@ -33,23 +33,50 @@ class backup_qtype_mathexpression_plugin extends backup_qtype_plugin {
         // Connect the visible container ASAP.
         $plugin->add_child($pluginwrapper);
 
+        // Answer
+        // Define the elements
+        $answers = new backup_nested_element('answers');
+        $answer = new backup_nested_element('answer', array('id'), array(
+            'answertext', 'answerformat', 'fraction', 'feedback',
+            'feedbackformat'));
+
+        // Build the tree
+        $pluginwrapper->add_child($answers);
+        $answers->add_child($answer);
+
+        // Set the sources
+        $answer->set_source_sql('
+            SELECT *
+            FROM {question_answers}
+            WHERE question = :question
+            ORDER BY id',
+            array('question' => backup::VAR_PARENTID));
+
+        // Aliases
+        $answer->set_source_alias('answer', 'answertext');
+
+        $answermathml = new backup_nested_element('answermathml', array('id'), array('mathml'));
+        $answer->add_child($answermathml);
+        $answermathml->set_source_table('qtype_mathexpression_answers',
+            array('question_answer_id' => backup::VAR_PARENTID));
+
         // Now create the qtype own structures.
         $options = new backup_nested_element('options', array('id'), array(
-                'buttonlist', 'comparetype', 'answer_mathml'));
+            'buttonlist', 'comparetype'));
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($options);
 
         // Set source to populate the data.
         $options->set_source_table('qtype_mathexpression_options',
-                array('questionid' => backup::VAR_PARENTID));
+            array('questionid' => backup::VAR_PARENTID));
 
         // Excludes
         $excludes = new backup_nested_element('excludes');
         $pluginwrapper->add_child($excludes);
 
         $exclude = new backup_nested_element('exclude', array('id'), array(
-                'answer', 'answer_mathml'));
+            'answer', 'answer_mathml'));
         $excludes->add_child($exclude);
 
         $exclude->set_source_table('qtype_mathexpression_exclude', array('questionid' => backup::VAR_PARENTID));
@@ -59,7 +86,7 @@ class backup_qtype_mathexpression_plugin extends backup_qtype_plugin {
         $pluginwrapper->add_child($variables);
 
         $var = new backup_nested_element('var', array('id'), array(
-                'variable', 'variable_mathml'));
+            'variable', 'variable_mathml'));
         $variables->add_child($var);
 
         $var->set_source_table('qtype_mathexpression_vars', array('questionid' => backup::VAR_PARENTID));

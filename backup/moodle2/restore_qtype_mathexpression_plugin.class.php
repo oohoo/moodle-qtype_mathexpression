@@ -19,6 +19,9 @@ class restore_qtype_mathexpression_plugin extends restore_qtype_plugin {
     protected function define_question_plugin_structure() {
         $paths = array();
 
+        // This qtype uses question_answers, add them.
+        $this->add_question_question_answers($paths);
+
         $elename = 'options';
         $elepath = $this->get_pathfor('/options');
         $paths[] = new restore_path_element($elename, $elepath);
@@ -29,6 +32,10 @@ class restore_qtype_mathexpression_plugin extends restore_qtype_plugin {
 
         $elename = 'var';
         $elepath = $this->get_pathfor('/vars/var');
+        $paths[] = new restore_path_element($elename, $elepath);
+
+        $elename = 'answermathml';
+        $elepath = $this->get_pathfor('/answers/answer/answermathml');
         $paths[] = new restore_path_element($elename, $elepath);
 
         return $paths;
@@ -87,6 +94,25 @@ class restore_qtype_mathexpression_plugin extends restore_qtype_plugin {
 
             $newitemid = $DB->insert_record('qtype_mathexpression_vars', $data);
             $this->set_mapping('qtype_mathexpression_vars', $oldid, $newitemid);
+        }
+    }
+
+    public function process_answermathml($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        // Detect if the question is created or mapped.
+        $oldanswerid   = $this->get_old_parentid('answer');
+        $newanswerid   = $this->get_new_parentid('answer');
+        $answercreated = $this->get_mappingid('answer_created', $oldanswerid) ? true : false;
+
+        if($answercreated) {
+            $data->question_answer_id = $newanswerid;
+
+            $newitemid = $DB->insert_record('qtype_mathexpression_answers', $data);
+            $this->set_mapping('qtype_mathexpression_answers', $oldid, $newitemid);
         }
     }
 }

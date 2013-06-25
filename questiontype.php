@@ -60,6 +60,7 @@ class qtype_mathexpression extends question_type {
             $answer->id = $DB->insert_record('question_answers', $answer);
 
             $answer_mathml = new stdClass();
+            $answer_mathml->questionid = $question->id;
             $answer_mathml->question_answer_id = $answer->id;
             $answer_mathml->mathml = $question->answer_mathml[$i];
             $DB->insert_record('qtype_mathexpression_answers', $answer_mathml);
