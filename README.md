@@ -40,8 +40,8 @@ when answering the question.
 valid but are actually incorrect. See the tutorial below for an example usage.
 
 **Tutorials**
-- [Polynomial Simplification](http://google.com)
-- [Gravitational Potential Energy](http://google.com)
+- [Polynomial Simplification](https://github.com/oohoo/moodle-qtype_mathexpression/blob/master/Tutorials.md#tutorial-1-polynomial-simplification)
+- [Gravitational Potential Energy](https://github.com/oohoo/moodle-qtype_mathexpression/blob/master/Tutorials.md#tutorial-2-polynomial-simplification)
 
 ### Question Type
 
