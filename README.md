@@ -10,6 +10,39 @@ require the student to submit a mathematical equation as an answer.
 ![MathExpression](https://github.com/oohoo/moodle-qtype_mathexpression/blob/master/studentview.png?raw=true
  "Math Expression")
 
+### Usage
+
+**Creating a Question**
+
+(Important fields and their descriptions)
+
+*Question Text:* This is the question, this is the part that is shown to the student.
+
+*Button Groups* and *Button List:* This is the list of buttons that will appear within the student's
+editor when answering the question. These are the buttons that are in addition to the variables that are used
+in the question.
+
+*Compare Type:* How the student's response is evaluated. Currently there are two methods:
+
+- Simple: Performs a simple symbolic comparison between two expressions. No expansion or factorization is
+performed hence expressions like "(x+1)^2" and "(1+x)^2" will evaluate as the same but expressions like "(x+1)^2"
+and "x^2+2*x+1" will not.
+- Full: Performs a full symbolic comparison between two expressions. This will involve fully simplifying each
+and then comparing to see if the result is the same.
+
+*Answers:* Each possible answer and their corresponding scores and feedback values. There must be at least one
+answer with 100% score.
+
+*Variables:* The algebraic variables that are part of the question. These appear within the student's editor
+when answering the question.
+
+*Excluded Expressions:* (If full compare type is used) These are expressions that would normally be considered
+valid but are actually incorrect. See the tutorial below for an example usage.
+
+**Tutorials**
+- [Polynomial Simplification](http://google.com)
+- [Gravitational Potential Energy](http://google.com)
+
 ### Question Type
 
 #### Installation
