@@ -37,8 +37,10 @@ class sage_simple:
 class sage_full:
     def GET(self):
         args = web.input(answer='', response='', vars='[]', exclude='[]')
-        result = sageserver.full_compare(args.answer, args.response, json.loads(args.vars),
-                                         json.loads(args.exclude))
+        web.debug('VARS');
+        web.debug(json.loads(args.vars.encode('unicode-escape')));
+        result = sageserver.full_compare(args.answer, args.response, json.loads(args.vars.encode('unicode-escape')),
+                                         json.loads(args.exclude.encode('unicode-escape')))
         return json.dumps(result)
 
     def POST(self):

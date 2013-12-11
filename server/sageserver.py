@@ -35,7 +35,8 @@ def prep_variables(vars):
     variables = []
     used_vars = []
     for x in range(0, len(vars)):
-        variables.append(mathmlconv.mathmlToSage(vars[x]))
+        #variables.append(mathmlconv.mathmlToSage(vars[x]))
+        variables.append(vars[x])
         used_vars.append((placeholders[x], var(placeholders[x])))
     return variables, used_vars
 
@@ -58,7 +59,7 @@ def replace_variables(expr, variables, placeholders):
 
 
 def prep_expression(expr, variables, placeholders):
-    expr = mathmlconv.mathmlToSage(expr)
+    #expr = mathmlconv.mathmlToSage(expr)
     expr = replace_variables(expr, variables, placeholders)
     #expr = preparse(expr)
     #expr = expr.replace('Integer', '')
@@ -139,7 +140,7 @@ def full_compare(answer, response, vars=[], exclude=[]):
     web.debug("Full compare of %s to %s with variables %s excluding %s" %
              (answer, response, str(vars), str(exclude)))
     sage.misc.preparser.implicit_multiplication(10)  # Configure Sage
-
+    
     variables, placeholders = prep_variables(vars)
 
     answer = prep_expression(answer, variables, placeholders)
