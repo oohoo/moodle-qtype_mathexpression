@@ -30,13 +30,6 @@ class qtype_mathexpression extends question_type {
 
         $result = new stdClass();
 
-        // Remove old answers (the mathml equivalents)
-        $answers = $DB->get_records('question_answers', array('question' => $question->id));
-        foreach($answers as $answer) {
-            $DB->delete_records('qtype_mathexpression_answers',
-                array('question_answer_id' => $answer->id));
-        }
-
         // Remove old answers
         $DB->delete_records('question_answers', array('question' => $question->id));
 
@@ -58,12 +51,6 @@ class qtype_mathexpression extends question_type {
             $answer->feedback = $question->feedback[$i]['text'];
             $answer->feedbackformat = $question->feedback[$i]['format'];
             $answer->id = $DB->insert_record('question_answers', $answer);
-
-            $answer_mathml = new stdClass();
-            $answer_mathml->questionid = $question->id;
-            $answer_mathml->question_answer_id = $answer->id;
-            $answer_mathml->mathml = $question->answer_mathml[$i];
-            $DB->insert_record('qtype_mathexpression_answers', $answer_mathml);
         }
 
         // Insert new options
@@ -80,10 +67,8 @@ class qtype_mathexpression extends question_type {
             if(isset($question->exclude)) {
                 for($i = 0; $i < sizeof($question->exclude); $i++) {
                     $expression = $question->exclude[$i];
-                    $expression_mathml = $question->exclude_mathml[$i];
                     if($expression != '') {
                         $excluded->answer = $expression;
-                        $excluded->answer_mathml = $expression_mathml;
                         $DB->insert_record('qtype_mathexpression_exclude', $excluded);
                     }
                 }
@@ -96,10 +81,8 @@ class qtype_mathexpression extends question_type {
             $var->questionid = $question->id;
             for($i = 0; $i < sizeof($question->variable); $i++) {
                 $expr = $question->variable[$i];
-                $expr_mathml = $question->variable_mathml[$i];
                 if($expr != '') {
                     $var->variable = $expr;
-                    $var->variable_mathml = $expr_mathml;
                     $DB->insert_record('qtype_mathexpression_vars', $var);
                 }
             }
@@ -127,9 +110,6 @@ class qtype_mathexpression extends question_type {
             if($answer->fraction == 1) {
                 $question->correctanswer = $answer->answer;
             }
-            $answer_mathml = $DB->get_record('qtype_mathexpression_answers',
-                array('question_answer_id' => $answer->id));
-            $answer->mathml = $answer_mathml->mathml;
         }
         $question->answers = $questiondata->options->answers;
 
@@ -139,18 +119,14 @@ class qtype_mathexpression extends question_type {
 
         $excluded = $DB->get_records('qtype_mathexpression_exclude', array('questionid' => $questiondata->id));
         $question->exclude = array();
-        $question->exclude_mathml = array();
         foreach($excluded as $excl) {
             $question->exclude[] = $excl->answer;
-            $question->exclude_mathml[] = $excl->answer_mathml;
         }
 
         $variables = $DB->get_records('qtype_mathexpression_vars', array('questionid' => $questiondata->id));
         $question->variable = array();
-        $question->variable_mathml = array();
         foreach($variables as $var) {
             $question->variable[] = $var->variable;
-            $question->variable_mathml[] = $var->variable_mathml;
         }
     }
 }

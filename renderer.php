@@ -20,18 +20,18 @@ class qtype_mathexpression_renderer extends qtype_renderer {
     /**
      * Return any HTML that needs to be included in the page's <head> when this
      * question is used.
-     * @global $PAGE
+     * @global moodle_page $PAGE
      * @param $qa the question attempt that will be displayed on the page.
      * @return string HTML fragment.
      */
     public function head_code(question_attempt $qa) {
         global $PAGE;
         $PAGE->requires->jquery();
-        $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/js/mathquill.min.js'));
-        $PAGE->requires->css(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/css/mathquill.css'));
-        $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/js/matheditor.js'));
-        $PAGE->requires->css(new moodle_url('/lib/editor/tinymce/plugins/matheditor/tinymce/css/matheditor.css'));
-        $PAGE->requires->js(new moodle_url('/lib/editor/tinymce/plugins/matheditor/all_strings.php'));
+        $PAGE->requires->js(new moodle_url('/question/type/mathexpression/js/mathquill.min.js'));
+        $PAGE->requires->css(new moodle_url('/question/type/mathexpression/css/mathquill.css'));
+        $PAGE->requires->js(new moodle_url('/question/type/mathexpression/js/matheditor.js'));
+        $PAGE->requires->css(new moodle_url('/question/type/mathexpression/css/matheditor.css'));
+        $PAGE->requires->js(new moodle_url('/question/type/mathexpression/all_strings.php'));
         $PAGE->requires->js(new moodle_url('/question/type/mathexpression/mathexpression.js'));
         return parent::head_code($qa);
     }
@@ -44,15 +44,23 @@ class qtype_mathexpression_renderer extends qtype_renderer {
      * @param question_display_options $options controls what should and should not be displayed.
      * @return string HTML fragment.
      */
-    public function formulation_and_controls(question_attempt $qa,
-            question_display_options $options) {
+    public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
+        global $DB;
         $question = $qa->get_question();
 
         $currentanswer = $qa->get_last_qt_var('answer');
         $inputname = $qa->get_qt_field_name('answer');
-        $inputname_mathml = $qa->get_qt_field_name('answer_mathml');
 
         $result = html_writer::tag('div', $question->format_questiontext($qa), array('class' => 'qtext'));
+        
+        $actions = $DB->get_records('qtype_mathexpression_action');
+        $operator_buttons = array();
+        foreach($actions as $action)
+        {
+            $operator_buttons[] =$action->name;
+        }
+        $operator_buttons = implode(',', $operator_buttons);
+        $result .= html_writer::script('var actions = '.json_encode($actions).'');
 
         if($options->readonly) {
             $result .= html_writer::tag('div', get_string('youranswer', 'qtype_mathexpression'));
@@ -65,13 +73,7 @@ class qtype_mathexpression_renderer extends qtype_renderer {
                 'value' => $currentanswer
             );
             $result .= html_writer::empty_tag('input', $inputattributes);
-
-            $mathmlattributes = array(
-                'type' => 'hidden',
-                'name' => $inputname_mathml
-            );
-            $result .= html_writer::empty_tag('input', $mathmlattributes);
-
+            
             $buttonlistattributes = array(
                 'type' => 'hidden',
                 'name' => 'buttonlist_'.$inputname,
@@ -82,7 +84,6 @@ class qtype_mathexpression_renderer extends qtype_renderer {
             $result .= html_writer::tag('div', '', array('class' => 'question-matheditor',
                 'data-matheditor' => 'input[name="'.$inputname.'"]',
                 'data-matheditorvars' => json_encode($question->variable),
-                'data-matheditor-mathml' => 'input[name="'.$inputname_mathml.'"]',
                 'data-matheditor-buttons' => 'input[name="buttonlist_'.$inputname.'"]'));
         }
 

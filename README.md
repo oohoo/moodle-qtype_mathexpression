@@ -7,7 +7,7 @@ require the student to submit a mathematical equation as an answer.
 * [Math Editor](https://github.com/oohoo/moodle-tinymce_matheditor)
 * [MathJax Filter](https://github.com/oohoo/moodle-filter_mathjax)
 
-![MathExpression](https://github.com/oohoo/moodle-qtype_mathexpression/blob/master/studentview.png?raw=true
+![MathExpression](https://github.com/oohoo/moodle-qtype_mathexpression/blob/master/pix/studentview.png?raw=true
  "Math Expression")
 
 ### Usage

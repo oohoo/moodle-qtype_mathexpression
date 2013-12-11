@@ -50,24 +50,24 @@
             // Attach a callback to the onchange event of the editor and update a hidden field
             // within the form
             var inputField = $($(this).data('matheditor'));
-            var inputFieldMathml = $($(this).data('matheditor-mathml'));
-
+            //var inputFieldMathml = $($(this).data('matheditor-mathml'));
+            /*
             var mathjaxdiv = $('<div style="display:none" id="question-matheditor-' + index + '"></div>').appendTo(this);
             mathjaxdiv.html('\\(' + inputField.val() + '\\)');
             MathJax.Hub.Queue(['Typeset', MathJax.Hub, '#question-matheditor-' + index]);
             MathJax.Hub.Queue(function() {
                 var math = MathJax.Hub.getAllJax('question-matheditor-' + index)[0];
                 inputFieldMathml.val(math.root.toMathML());
-            });
+            });*/
 
-            editor.onChange(function(latex) {
+            editor.onChange(function(latex) {/*
                 MathJax.Hub.Queue(function() {
                     var math = MathJax.Hub.getAllJax('question-matheditor-' + index)[0];
                     MathJax.Hub.Queue(['Text', math, latex]);
                     MathJax.Hub.Queue(function() {
                         inputFieldMathml.val(math.root.toMathML());
                     });
-                });
+                });*/
                 inputField.val(latex);
             });
 
@@ -93,7 +93,7 @@
             // Attach a callback to the onchange event of the editor and update a hidden field
             // within the form
             var inputField = $('input[name="exclude[' + index + ']"]');
-            var inputFieldMathml = $('input[name="exclude_mathml[' + index + ']"]');
+            /*var inputFieldMathml = $('input[name="exclude_mathml[' + index + ']"]');
 
             var mathjaxdiv = $('<div style="display:none" id="exclude-matheditor-' + index + '"></div>').appendTo(this);
             mathjaxdiv.html('\\(' + inputField.val() + '\\)');
@@ -101,15 +101,15 @@
             MathJax.Hub.Queue(function() {
                 var math = MathJax.Hub.getAllJax('exclude-matheditor-' + index)[0];
                 inputFieldMathml.val(math.root.toMathML());
-            });
+            });*/
 
             editor.onChange(function(latex) {
-                MathJax.Hub.Queue(function() {
+                MathJax.Hub.Queue(function() {/*
                     var math = MathJax.Hub.getAllJax('exclude-matheditor-' + index)[0];
                     MathJax.Hub.Queue(['Text', math, latex]);
                     MathJax.Hub.Queue(function() {
                         inputFieldMathml.val(math.root.toMathML());
-                    });
+                    });*/
                 });
                 inputField.val(latex);
             });
@@ -133,7 +133,7 @@
             // Attach a callback to the onchange event of the editor and update a hidden field
             // within the form
             var inputField = $('input[name="variable[' + index + ']"]');
-            var inputFieldMathml = $('input[name="variable_mathml[' + index + ']"]');
+            /*var inputFieldMathml = $('input[name="variable_mathml[' + index + ']"]');
 
             var mathjaxdiv = $('<div style="display:none" id="variable-matheditor-' + index + '"></div>').appendTo(this);
             mathjaxdiv.html('\\(' + inputField.val() + '\\)');
@@ -141,15 +141,15 @@
             MathJax.Hub.Queue(function() {
                 var math = MathJax.Hub.getAllJax('variable-matheditor-' + index)[0];
                 inputFieldMathml.val(math.root.toMathML());
-            });
+            });*/
 
             editor.onChange(function(latex) {
-                MathJax.Hub.Queue(function() {
+                MathJax.Hub.Queue(function() {/*
                     var math = MathJax.Hub.getAllJax('variable-matheditor-' + index)[0];
                     MathJax.Hub.Queue(['Text', math, latex]);
                     MathJax.Hub.Queue(function() {
                         inputFieldMathml.val(math.root.toMathML());
-                    });
+                    });*/
                 });
                 inputField.val(latex);
             });
@@ -177,7 +177,7 @@
             // Attach a callback to the onchange event of the editor and update a hidden field
             // within the form
             var inputField = $('input[name="answer[' + index + ']"]');
-            var inputFieldMathml = $('input[name="answer_mathml[' + index + ']"]');
+            /*var inputFieldMathml = $('input[name="answer_mathml[' + index + ']"]');
 
             var mathjaxdiv = $('<div style="display:none" id="answer-matheditor-' + index + '"></div>').appendTo(this);
             mathjaxdiv.html('\\(' + inputField.val() + '\\)');
@@ -185,21 +185,24 @@
             MathJax.Hub.Queue(function() {
                 var math = MathJax.Hub.getAllJax('answer-matheditor-' + index)[0];
                 inputFieldMathml.val(math.root.toMathML());
-            });
+            });*/
 
             editor.onChange(function(latex) {
-                MathJax.Hub.Queue(function() {
+                MathJax.Hub.Queue(function() {/*
                     var math = MathJax.Hub.getAllJax('answer-matheditor-' + index)[0];
                     MathJax.Hub.Queue(['Text', math, latex]);
                     MathJax.Hub.Queue(function() {
                         inputFieldMathml.val(math.root.toMathML());
-                    });
+                    });*/
                 });
                 inputField.val(latex);
             });
 
             // Retrieve any existing data from this field and render it within the editor
             editor.setLatex(inputField.val());
+            
+            //Set the Editor in the data for external use
+            $(this).data('MathEditor', editor);
         });
 
         var buttonListElement = $('#id_buttonlist');

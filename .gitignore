@@ -1,2 +1,6 @@
 server/*.pyc
+js/mathquill.min.js
+css/mathquill.css
+css/font/*
 mathexpression.zip
+/nbproject/private/

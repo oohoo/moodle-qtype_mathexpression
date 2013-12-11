@@ -40,9 +40,12 @@ echo 'Full Compare:<br/>';
 echo 'Expression 1: \\( \\left(\\alpha + 1\\right)^2 \\)<br/>';
 echo 'Expression 2: \\( \\alpha^2 + 2\\alpha + 1 \\)<br/>';
 
-$fields = array('expr1' => '\\left(\\alpha + 1 \\right)^2',
-                'expr2' => '\\alpha^2 + 2\\alpha + 1',
-                'exclude' => '[]');
+$fields = array('answer' => '(\\alpha + 1)^2',
+                'response' => '\\alpha^2 + 2 \\alpha + 1',
+                'vars' => '["\\alpha"]',
+                'exclude' => '[]'
+          );
+
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url.'/full');

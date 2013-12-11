@@ -13,10 +13,11 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later  **
  * *************************************************************************
  * ************************************************************************ */
-
 defined('MOODLE_INTERNAL') || die();
 
-class qtype_mathexpression_question extends question_graded_automatically {
+class qtype_mathexpression_question extends question_graded_automatically
+{
+
     /** @var string valid LaTeX representation of the answer */
     public $correctanswer;
 
@@ -34,8 +35,9 @@ class qtype_mathexpression_question extends question_graded_automatically {
      * @override
      * @return array storing (variable name) => (variable type)
      */
-    public function get_expected_data() {
-        return array('answer' => PARAM_RAW, 'answer_mathml' => PARAM_RAW);
+    public function get_expected_data()
+    {
+        return array('answer' => PARAM_RAW);
     }
 
     /**
@@ -45,7 +47,8 @@ class qtype_mathexpression_question extends question_graded_automatically {
      * @override
      * @return array storing (variable name) => (correct answer)
      */
-    public function get_correct_response() {
+    public function get_correct_response()
+    {
         return array('answer' => $this->correctanswer);
     }
 
@@ -59,7 +62,8 @@ class qtype_mathexpression_question extends question_graded_automatically {
      * @param array $response the user responses (a hash of field => value elements)
      * @return true if the response is complete, false otherwise
      */
-    public function is_complete_response(array $response) {
+    public function is_complete_response(array $response)
+    {
         return !empty($response['answer']);
     }
 
@@ -71,11 +75,15 @@ class qtype_mathexpression_question extends question_graded_automatically {
      * @param array $response the user responses (a hash of field => value elements)
      * @return string plain text summary of user response
      */
-    public function summarise_response(array $response) {
-        if (isset($response['answer'])) {
+    public function summarise_response(array $response)
+    {
+        if (isset($response['answer']))
+        {
             // Return MathJax renderable text
-            return '\('.$response['answer'].'\)';
-        } else {
+            return '\(' . $response['answer'] . '\)';
+        }
+        else
+        {
             return null;
         }
     }
@@ -89,12 +97,13 @@ class qtype_mathexpression_question extends question_graded_automatically {
      * @param array $newresponse the new user responses (a hash of field => value elements)
      * @return true if the responses are the same, false otherwise
      */
-    public function is_same_response(array $prevresponse, array $newresponse) {
+    public function is_same_response(array $prevresponse, array $newresponse)
+    {
         // arrays_same_at_key_missing_is_blank is defined in the question/engine/lib.php file
         // it simply compares the two arrays at the given key and checks to see if they are
         // equivalent using ===
         return question_utils::arrays_same_at_key_missing_is_blank(
-            $prevresponse, $newresponse, 'answer');
+                        $prevresponse, $newresponse, 'answer');
     }
 
     /**
@@ -106,8 +115,77 @@ class qtype_mathexpression_question extends question_graded_automatically {
      * @param array $response the user responses (a hash of field => value elements)
      * @return string containing validation error
      */
-    public function get_validation_error(array $response) {
+    public function get_validation_error(array $response)
+    {
         return get_string('pleaseenteranswer', 'qtype_mathexpression');
+    }
+
+    /**
+     * Convert a Macro like Latex string in the desired language
+     * @global moodle_database $DB
+     * @param int $languageid The language ID for the translation
+     * @param string $latex The macro like latex string
+     * @return string
+     */
+    public function get_language_translation($languageid, $latex)
+    {
+        global $DB;
+        $translations = array();
+        $result = $latex;
+
+        $sql = 'SELECT a.id AS id, a.name as macro, t.translation AS translation '
+                . 'FROM {qtype_mathexpression_trad} AS t '
+                . '   JOIN {qtype_mathexpression_action} AS a ON a.id = t.actionid '
+                . 'WHERE t.langid = ?';
+        $translations = $DB->get_records_sql($sql, array($languageid));
+        $regex = '/(?:\{((?:[^{}]++|\{(?1)\})++)\})/';
+        $params = array();
+
+        //Search and replace each translation
+        foreach ($translations as $translation)
+        {
+            //The number of params is needed from the translation
+            $nbParams = substr_count($translation->translation, '%s');
+            $nextPos = strpos($result, '\\' . $translation->macro);
+            //While there is this macro we replace it
+            while ($nextPos !== false)
+            {
+                $length_macroname = strlen('\\' . $translation->macro);
+                
+                //Search all the occurences of {text}{text}....
+                preg_match_all($regex, substr($result, $nextPos), $params);
+
+                $params_with_braces = $params[0];
+                $params_clean = $params[1];
+                $length_params = 0;
+
+                //Get the size of the params
+                for ($i = 0; $i < $nbParams; $i++)
+                {
+                    $length_params += strlen($params_with_braces[$i]);
+                }
+                //Build the start and end of the string
+                $start = substr($result, 0, $nextPos);
+                $end = substr($result, strlen($start) + $length_macroname + $length_params);
+
+//                echo "<br/>";
+//                echo "RESULT BEFORE TRANSFORM=$result<br/>";
+
+                //Put the translation with the params
+                $result = $start . vsprintf($translation->translation, $params_clean) . $end;
+
+//                echo "MACRO ACTION=$translation->macro<br/>";
+//                echo "START=$start<br/>";
+//                echo "TRANSLATION STRING=$translation->translation<br/>";
+//                echo "RESULT=$result<br/>";
+//                echo "END=$end<br/>";
+//                print_object($params_clean);
+
+                //Search the next position
+                $nextPos = strpos($result, '\\' . $translation->macro);
+            }
+        }
+        return $result;
     }
 
     /**
@@ -119,29 +197,52 @@ class qtype_mathexpression_question extends question_graded_automatically {
      * @param array $response the user responses (a hash of field => value elements)
      * @return array (number, integer) corresponding to the fraction and the state.
      */
-    public function grade_response(array $response) {
-        global $CFG;
+    public function grade_response(array $response)
+    {
+        global $CFG, $DB;
+        
+        //Get the language
+        $sage_language = $DB->get_record('qtype_mathexpression_lang', array('name' => 'Sage Math'));
 
-        $fields = array('response' => $response['answer_mathml'],
-            'vars' => json_encode($this->variable_mathml));
+        //Replace the latex in the variable and the exclude
+        foreach($this->variable as $key => $var)
+        {
+            $this->variable[$key] = $this->get_language_translation($sage_language->id, $var);
+        }
+        foreach($this->exclude as $key => $var)
+        {
+            $this->exclude[$key] = $this->get_language_translation($sage_language->id, $var);
+        }
+        
+        $fields = array('response' => $this->get_language_translation($sage_language->id, $response['answer']),
+            'vars' => json_encode($this->variable));
+        $this->get_language_translation($sage_language->id, $response['answer']);
 
         $url = $CFG->qtype_mathexpression_sageserver;
-        if($url == '') {
+        if ($url == '')
+        {
             throw new moodle_exception('Must provide a Sage server URL in the Question Type settings');
         }
 
-        if($this->comparetype == 'full') {
+        if ($this->comparetype == 'full')
+        {
             $url .= '/full';
-            $fields['exclude'] = json_encode($this->exclude_mathml);
-        } else if($this->comparetype == 'simple') {
+            $fields['exclude'] = json_encode($this->exclude);
+        }
+        else if ($this->comparetype == 'simple')
+        {
             $url .= '/simple';
-        } else {
+        }
+        else
+        {
             throw new moodle_exception('Invalid Math Expression compare type');
         }
-
+         
         $fraction = 0;
-        foreach($this->answers as $answer) {
-            $fields['answer'] = $answer->mathml;
+        foreach ($this->answers as $answer)
+        {
+            $fields['answer'] = $this->get_language_translation($sage_language->id, $answer->answer);
+
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_POST, 1);
@@ -150,12 +251,16 @@ class qtype_mathexpression_question extends question_graded_automatically {
 
             $server_response = curl_exec($ch);
             curl_close($ch);
-            try {
+            try
+            {
                 $sage_result = json_decode($server_response);
-                if($sage_result->result) {
+                if ($sage_result->result)
+                {
                     $fraction = $answer->fraction;
                 }
-            } catch(Exception $e) {
+            }
+            catch (Exception $e)
+            {
                 // Do nothing, fraction is already 0
             }
         }
@@ -164,4 +269,5 @@ class qtype_mathexpression_question extends question_graded_automatically {
         // documentation for more information
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
+
 }
