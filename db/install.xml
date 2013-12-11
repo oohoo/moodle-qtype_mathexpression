@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/mathexpression/db" VERSION="20130625" COMMENT="XMLDB file for Moodle question/type/mathexpression"
+<XMLDB PATH="question/type/mathexpression/db" VERSION="20131208" COMMENT="XMLDB file for Moodle question/type/mathexpression"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -21,7 +21,6 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="answer" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The expression that must be excluded when evaluating (ie if the student has this response, it is incorrect)"/>
-        <FIELD NAME="answer_mathml" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -32,22 +31,51 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="variable" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="variable_mathml" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="qtype_mathexpression_answers" COMMENT="Answers table">
+    <TABLE NAME="qtype_mathexpression_group" COMMENT="The table of buttons groups">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="question_answer_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="mathml" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="the mathml equivalent of the answer"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the group"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="question_answer_id" TYPE="foreign" FIELDS="question_answer_id" REFTABLE="question_answers" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="qtype_mathexpression_action" COMMENT="The table of Actions (operators, variables, etc.) for the editor">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The group attached to this action"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The macro name of the action. See the language file for the Text of this command"/>
+        <FIELD NAME="coordinates" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Json of the coordinates of the Element on the picture Ex: {x: 125, y: 50}  Optional params for the width and height.  Ex: {x: 125, y: 50, w: 50, h: 50}"/>
+        <FIELD NAME="default_action" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="All buttons with the same coordinates will be grouped on one button (with an extra dropdown in order to choose the desired one) One will be the default one (default = 1) when clicked on it."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="qtype_mathexpression_lang" COMMENT="The different languages available for traduction">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the language"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="qtype_mathexpression_trad" COMMENT="The traduction table for an action to the result in the choosen language">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="langid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the language table"/>
+        <FIELD NAME="actionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The action to translate"/>
+        <FIELD NAME="translation" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The translation for example: (%s).dot_product(%s)"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>
